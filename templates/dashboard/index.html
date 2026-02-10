@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TutorHub{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="text-gray-600 mt-1">Welcome back! Here's your tutoring overview.</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Students -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-600">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-600 text-sm font-medium">Total Students</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_students }}</p>
+            </div>
+            <svg class="w-8 h-8 text-indigo-600 opacity-20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Sessions This Month -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-600">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-600 text-sm font-medium">Sessions This Month</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">{{ month_count }}</p>
+            </div>
+            <svg class="w-8 h-8 text-blue-600 opacity-20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Revenue This Month -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-600">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-600 text-sm font-medium">Revenue This Month</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">${{ month_revenue }}</p>
+            </div>
+            <svg class="w-8 h-8 text-green-600 opacity-20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Outstanding Payment -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-600">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-600 text-sm font-medium">Outstanding Payment</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">${{ outstanding }}</p>
+                <p class="text-xs text-gray-600 mt-2">{{ unpaid_count }} session{{ 's' if unpaid_count != 1 else '' }}</p>
+            </div>
+            <svg class="w-8 h-8 text-orange-600 opacity-20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Today's Sessions -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Today's Sessions</h2>
+
+        {% if todays_sessions %}
+            <div class="space-y-3">
+                {% for session in todays_sessions %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ session.student_display_name() }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ session.scheduled_at.strftime('%I:%M %p') }} - {{ session.duration_minutes }} minutes</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                {% if session.session_type == 'online' %}
+                                    <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">Online</span>
+                                {% else %}
+                                    <span class="inline-block px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-medium">In-Person</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <a href="{{ url_for('scheduling.session_detail', session_id=session.id) }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                            View
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No sessions scheduled for today</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="space-y-3">
+            <a href="{{ url_for('students.add_student') }}" class="flex items-center justify-center w-full px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Add Student
+            </a>
+            <a href="{{ url_for('scheduling.add_session') }}" class="flex items-center justify-center w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Schedule Session
+            </a>
+            <a href="{{ url_for('scheduling.availability') }}" class="flex items-center justify-center w-full px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Set Availability
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming This Week -->
+<div class="bg-white rounded-lg shadow-md p-6 mt-6">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Upcoming This Week</h2>
+
+    {% if upcoming_sessions %}
+        <div class="space-y-3">
+            {% for session in upcoming_sessions %}
+            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition flex justify-between items-center">
+                <div>
+                    <p class="font-semibold text-gray-900">{{ session.student_display_name() }}</p>
+                    <p class="text-sm text-gray-600 mt-1">
+                        {{ session.scheduled_at.strftime('%a, %b %d') }} at {{ session.scheduled_at.strftime('%I:%M %p') }}
+                    </p>
+                </div>
+                <a href="{{ url_for('scheduling.session_detail', session_id=session.id) }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                    View
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-8">
+            <p class="text-gray-600">No sessions scheduled for this week</p>
+            <a href="{{ url_for('scheduling.add_session') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-2">
+                Schedule one now
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
