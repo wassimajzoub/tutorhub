@@ -1,6 +1,6 @@
 import os
-from flask import Flask, redirect, url_for
-from flask_login import LoginManager
+from flask import Flask, redirect, url_for, render_template
+from flask_login import LoginManager, current_user
 from config import config
 from database.db import db
 from database.models import User
@@ -42,7 +42,9 @@ def create_app(config_name=None):
     # Home route
     @app.route('/')
     def index():
-        return redirect(url_for('auth.login'))
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard.index'))
+        return render_template('landing.html')
 
     # Create tables
     with app.app_context():
