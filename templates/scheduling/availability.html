@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Set Availability - TutorHub{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Set Your Availability</h1>
+        <p class="text-gray-600 mt-2">Define your weekly teaching schedule so students can book sessions with you.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('scheduling.availability') }}" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for day_idx in range(7) %}
+            {% set day_name = day_names[day_idx] %}
+            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition">
+                <div class="flex items-center mb-4">
+                    <input
+                        type="checkbox"
+                        id="day_{{ day_idx }}_enabled"
+                        name="day_{{ day_idx }}_enabled"
+                        value="on"
+                        {% if avail_dict.get(day_idx, {}).get('enabled') %}checked{% endif %}
+                        class="h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                        onchange="toggleDayInputs({{ day_idx }})"
+                    >
+                    <label for="day_{{ day_idx }}_enabled" class="ml-3 text-lg font-semibold text-gray-900 cursor-pointer">
+                        {{ day_name }}
+                    </label>
+                </div>
+
+                <div id="day_{{ day_idx }}_inputs" class="space-y-3" {% if not avail_dict.get(day_idx, {}).get('enabled') %}style="opacity: 0.5; pointer-events: none;"{% endif %}>
+                    <div>
+                        <label for="day_{{ day_idx }}_start" class="block text-sm font-medium text-gray-700">Start Time</label>
+                        <input
+                            type="time"
+                            id="day_{{ day_idx }}_start"
+                            name="day_{{ day_idx }}_start"
+                            value="{{ avail_dict.get(day_idx, {}).get('start', '') }}"
+                            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="day_{{ day_idx }}_end" class="block text-sm font-medium text-gray-700">End Time</label>
+                        <input
+                            type="time"
+                            id="day_{{ day_idx }}_end"
+                            name="day_{{ day_idx }}_end"
+                            value="{{ avail_dict.get(day_idx, {}).get('end', '') }}"
+                            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        >
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-end pt-6 border-t border-gray-200">
+            <button
+                type="submit"
+                class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition flex items-center space-x-2"
+            >
+                <span>Save Availability</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleDayInputs(dayIdx) {
+    const checkbox = document.getElementById(`day_${dayIdx}_enabled`);
+    const inputsDiv = document.getElementById(`day_${dayIdx}_inputs`);
+
+    if (checkbox.checked) {
+        inputsDiv.style.opacity = '1';
+        inputsDiv.style.pointerEvents = 'auto';
+    } else {
+        inputsDiv.style.opacity = '0.5';
+        inputsDiv.style.pointerEvents = 'none';
+    }
+}
+</script>
+{% endblock %}
