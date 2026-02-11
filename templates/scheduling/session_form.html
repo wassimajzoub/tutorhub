@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule Session - TutorHub{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Schedule a New Session</h1>
+            <p class="text-gray-600 mt-2">Create a new tutoring session with one of your students.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('scheduling.add_session') }}" class="space-y-6">
+            <!-- Student Selection -->
+            <div>
+                <label for="student_id" class="block text-sm font-medium text-gray-900">Student</label>
+                <select
+                    id="student_id"
+                    name="student_id"
+                    required
+                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                >
+                    <option value="">Select a student...</option>
+                    {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="session_date" class="block text-sm font-medium text-gray-900">Date</label>
+                <input
+                    type="date"
+                    id="session_date"
+                    name="session_date"
+                    required
+                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Time -->
+            <div>
+                <label for="session_time" class="block text-sm font-medium text-gray-900">Time</label>
+                <input
+                    type="time"
+                    id="session_time"
+                    name="session_time"
+                    required
+                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Duration -->
+            <div>
+                <label for="duration" class="block text-sm font-medium text-gray-900">Duration</label>
+                <select
+                    id="duration"
+                    name="duration"
+                    required
+                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                >
+                    <option value="">Select duration...</option>
+                    {% for duration in durations %}
+                    <option value="{{ duration }}">{{ duration }} minutes</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Session Type -->
+            <div>
+                <label class="block text-sm font-medium text-gray-900 mb-3">Session Type</label>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <input
+                            type="radio"
+                            id="type_online"
+                            name="session_type"
+                            value="online"
+                            required
+                            class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                        >
+                        <label for="type_online" class="ml-3 text-gray-700 cursor-pointer">Online</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input
+                            type="radio"
+                            id="type_in_person"
+                            name="session_type"
+                            value="in-person"
+                            required
+                            class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                        >
+                        <label for="type_in_person" class="ml-3 text-gray-700 cursor-pointer">In-Person</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meeting Link (for online sessions) -->
+            <div id="meeting_link_container" style="display: none;">
+                <label for="meeting_link" class="block text-sm font-medium text-gray-900">Meeting Link</label>
+                <input
+                    type="url"
+                    id="meeting_link"
+                    name="meeting_link"
+                    placeholder="https://zoom.us/j/..."
+                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Location (for in-person sessions) -->
+            <div id="location_container" style="display: none;">
+                <label for="location" class="block text-sm font-medium text-gray-900">Location</label>
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    placeholder="Enter location or address..."
+                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{{ url_for('scheduling.sessions_list') }}" class="px-6 py-2 text-gray-700 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button
+                    type="submit"
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
+                >
+                    Schedule Session
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeRadios = document.querySelectorAll('input[name="session_type"]');
+    const meetingLinkContainer = document.getElementById('meeting_link_container');
+    const locationContainer = document.getElementById('location_container');
+
+    function updateSessionTypeFields() {
+        const selectedType = document.querySelector('input[name="session_type"]:checked')?.value;
+        if (selectedType === 'online') {
+            meetingLinkContainer.style.display = 'block';
+            locationContainer.style.display = 'none';
+        } else if (selectedType === 'in-person') {
+            meetingLinkContainer.style.display = 'none';
+            locationContainer.style.display = 'block';
+        }
+    }
+
+    typeRadios.forEach(radio => {
+        radio.addEventListener('change', updateSessionTypeFields);
+    });
+
+    updateSessionTypeFields();
+});
+</script>
+{% endblock %}
