@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Confirmed - TutorHub{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto text-center py-12">
+
+  <!-- Success Icon -->
+  <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+  </div>
+
+  <h1 class="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h1>
+  <p class="text-gray-600 mb-8">Your session with {{ tutor.full_name }} has been booked.</p>
+
+  <!-- Booking Details -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-left">
+    <h2 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">Session Details</h2>
+
+    <div class="space-y-3">
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Student</span>
+        <span class="text-sm font-medium text-gray-900">{{ student_name }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Tutor</span>
+        <span class="text-sm font-medium text-gray-900">{{ tutor.full_name }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Date</span>
+        <span class="text-sm font-medium text-gray-900">{{ session.scheduled_at.strftime('%A, %B %d, %Y') }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Time</span>
+        <span class="text-sm font-medium text-gray-900">{{ session.scheduled_at.strftime('%I:%M %p') }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Duration</span>
+        <span class="text-sm font-medium text-gray-900">{{ session.duration_minutes }} minutes</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-sm text-gray-600">Type</span>
+        <span class="text-sm font-medium text-gray-900">
+          {% if session.session_type == 'online' %}Online{% else %}In-Person{% endif %}
+        </span>
+      </div>
+      <hr class="border-gray-100">
+      <div class="flex justify-between">
+        <span class="text-sm font-medium text-gray-700">Total</span>
+        <span class="text-sm font-bold text-gray-900">${{ "%.2f"|format(session.rate_charged) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-sm text-gray-500 mt-6">
+    {{ tutor.full_name }} will be in touch to confirm the details.
+  </p>
+
+  <a href="{{ url_for('booking.public_profile', slug=tutor.profile_slug) }}"
+     class="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+    ← Book another session
+  </a>
+
+  <p class="text-center text-xs text-gray-400 mt-8">Powered by TutorHub</p>
+</div>
+{% endblock %}
