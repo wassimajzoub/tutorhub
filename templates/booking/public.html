@@ -1,0 +1,250 @@
+Hello World Test{% extends "base.html" %}
+
+{% block title %}Book a Session with {{ tutor.full_name }} - TutorHub{% endblock %}
+
+{% block head %}
+<style>
+  .date-btn { transition: all 0.15s ease; }
+  .date-btn:hover { background-color: #e0e7ff; }
+  .date-btn.active { background-color: #4f46e5; color: #fff; }
+  .slot-btn { transition: all 0.15s ease; }
+  .slot-btn:hover { background-color: #e0e7ff; }
+  .slot-btn.active { background-color: #4f46e5; color: #fff; }
+  .fade-in { animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+  <!-- Tutor Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">{{ tutor.full_name }}</h1>
+    {% if tutor.subjects %}
+      <p class="text-gray-500 mt-1">{{ tutor.subjects }}</p>
+    {% endif %}
+    {% if tutor.bio %}
+      <p class="text-gray-600 text-sm mt-2">{{ tutor.bio }}</p>
+    {% endif %}
+    <p class="text-indigo-600 font-medium mt-2">${{ "%.2f"|format(tutor.hourly_rate) }}/hr</p>
+  </div>
+
+  <!-- Booking Card -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+
+    <!-- Step 1: Duration -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Session Length</label>
+      <div class="flex flex-wrap gap-2" id="duration-picker">
+        {% for d in durations %}
+        <button type="button"
+                class="duration-btn px-4 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-indigo-400 transition {% if loop.first %}active border-indigo-600 bg-indigo-600 text-white{% endif %}"
+                data-duration="{{ d }}"
+                onclick="selectDuration(this, {{ d }})">
+          {{ d }} min
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Step 2: Date -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Choose a Date</label>
+      <div class="flex gap-2 overflow-x-auto pb-2" id="date-picker">
+        {% for d in dates %}
+        <button type="button"
+                class="date-btn flex-shrink-0 w-16 py-2 text-center rounded-lg border border-gray-200 text-sm"
+                data-date="{{ d.strftime('%Y-%m-%d') }}"
+                onclick="selectDate(this, '{{ d.strftime('%Y-%m-%d') }}')">
+          <div class="text-xs text-gray-500">{{ d.strftime('%a') }}</div>
+          <div class="font-semibold text-gray-800">{{ d.strftime('%b %d') }}</div>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Step 3: Time Slots -->
+    <div class="mb-6" id="slots-section" style="display:none;">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Available Times</label>
+      <div id="slots-loading" style="display:none;" class="text-sm text-gray-500 py-4 text-center">Loading available slots…</div>
+      <div id="slots-container" class="flex flex-wrap gap-2"></div>
+      <div id="no-slots" style="display:none;" class="text-sm text-gray-500 py-4 text-center">
+        No available slots on this date. Please try another day.
+      </div>
+    </div>
+
+    <!-- Step 4: Booking Form -->
+    <div id="booking-form-section" style="display:none;" class="fade-in">
+      <hr class="my-6 border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Your Details</h2>
+
+      <form method="POST" action="{{ url_for('booking.confirm_booking', slug=tutor.profile_slug) }}">
+        <input type="hidden" name="date" id="form-date">
+        <input type="hidden" name="time" id="form-time">
+        <input type="hidden" name="duration" id="form-duration">
+
+        <div class="space-y-4">
+          <div>
+            <label for="student_name" class="block text-sm font-medium text-gray-700 mb-1">Student Name *</label>
+            <input type="text" name="student_name" id="student_name" required
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                   placeholder="Student's full name">
+          </div>
+
+          <div>
+            <label for="parent_email" class="block text-sm font-medium text-gray-700 mb-1">Parent/Guardian Email</label>
+            <input type="email" name="parent_email" id="parent_email"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                   placeholder="email@example.com">
+          </div>
+
+          <div>
+            <label for="parent_phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <input type="tel" name="parent_phone" id="parent_phone"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                   placeholder="+1 (555) 000-0000">
+          </div>
+
+          <div>
+            <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+            <input type="text" name="subject" id="subject"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                   placeholder="e.g. Math, English, Science">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Session Type</label>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer hover:border-indigo-400 transition">
+                <input type="radio" name="session_type" value="online" checked class="text-indigo-600">
+                Online
+              </label>
+              <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer hover:border-indigo-400 transition">
+                <input type="radio" name="session_type" value="in_person" class="text-indigo-600">
+                In-Person
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg text-sm">
+          <p class="font-medium text-gray-700 mb-1">Booking Summary</p>
+          <p class="text-gray-600"><span id="summary-date">—</span> at <span id="summary-time">—</span></p>
+          <p class="text-gray-600"><span id="summary-duration">—</span> minutes · <span id="summary-cost">—</span></p>
+        </div>
+
+        <button type="submit"
+                class="mt-6 w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition text-sm">
+          Confirm Booking
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <p class="text-center text-xs text-gray-400 mt-6">Powered by TutorHub</p>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  var TUTOR_ID = {{ tutor.id }};
+  var HOURLY_RATE = {{ tutor.hourly_rate }};
+
+  var selectedDuration = {{ durations[0] }};
+  var selectedDate = null;
+  var selectedTime = null;
+
+  function selectDuration(btn, duration) {
+    document.querySelectorAll('.duration-btn').forEach(function(b) {
+      b.classList.remove('active', 'bg-indigo-600', 'text-white', 'border-indigo-600');
+    });
+    btn.classList.add('active', 'bg-indigo-600', 'text-white', 'border-indigo-600');
+    selectedDuration = duration;
+    document.getElementById('form-duration').value = duration;
+    if (selectedDate) fetchSlots();
+  }
+
+  function selectDate(btn, dateStr) {
+    document.querySelectorAll('.date-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    selectedDate = dateStr;
+    document.getElementById('form-date').value = dateStr;
+    selectedTime = null;
+    hideForm();
+    fetchSlots();
+  }
+
+  function fetchSlots() {
+    var section = document.getElementById('slots-section');
+    var container = document.getElementById('slots-container');
+    var loading = document.getElementById('slots-loading');
+    var noSlots = document.getElementById('no-slots');
+
+    section.style.display = 'block';
+    container.innerHTML = '';
+    noSlots.style.display = 'none';
+    loading.style.display = 'block';
+
+    fetch('/api/slots/' + TUTOR_ID + '/' + selectedDate + '?duration=' + selectedDuration)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        loading.style.display = 'none';
+        if (!data.slots || data.slots.length === 0) {
+          noSlots.style.display = 'block';
+          return;
+        }
+        data.slots.forEach(function(slot) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'slot-btn px-4 py-2 text-sm rounded-lg border border-gray-200 text-gray-700';
+          btn.textContent = formatTime(slot);
+          btn.addEventListener('click', function() { selectSlot(btn, slot); });
+          container.appendChild(btn);
+        });
+      })
+      .catch(function() {
+        loading.style.display = 'none';
+        noSlots.style.display = 'block';
+      });
+  }
+
+  function selectSlot(btn, timeStr) {
+    document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    selectedTime = timeStr;
+    document.getElementById('form-time').value = timeStr;
+    showForm();
+  }
+
+  function showForm() {
+    document.getElementById('booking-form-section').style.display = 'block';
+    updateSummary();
+  }
+
+  function hideForm() {
+    document.getElementById('booking-form-section').style.display = 'none';
+  }
+
+  function updateSummary() {
+    var dateObj = new Date(selectedDate + 'T00:00:00');
+    var opts = { weekday: 'long', month: 'long', day: 'numeric' };
+    document.getElementById('summary-date').textContent = dateObj.toLocaleDateString('en-US', opts);
+    document.getElementById('summary-time').textContent = formatTime(selectedTime);
+    document.getElementById('summary-duration').textContent = selectedDuration;
+    var cost = (HOURLY_RATE * selectedDuration / 60).toFixed(2);
+    document.getElementById('summary-cost').textContent = '$' + cost;
+  }
+
+  function formatTime(t) {
+    var parts = t.split(':');
+    var h = parseInt(parts[0]);
+    var m = parts[1];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    var hr = h % 12 || 12;
+    return hr + ':' + m + ' ' + ampm;
+  }
+
+  document.getElementById('form-duration').value = selectedDuration;
+</script>
+{% endblock %}
