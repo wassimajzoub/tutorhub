@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from database.db import db
 from database.models import User, Session, Student
 from scheduling.utils import get_available_slots
+from utils.email_service import send_booking_confirmation_async
 
 booking_bp = Blueprint('booking', __name__)
 
@@ -78,6 +79,11 @@ def confirm_booking(slug):
         is_active=True,
     ).first() if parent_email else None
 
+    # Set meeting link for online sessions
+    meeting_link = ''
+    if session_type == 'online' and tutor.default_meeting_link:
+        meeting_link = tutor.default_meeting_link
+
     session = Session(
         user_id=tutor.id,
         student_id=student.id if student else None,
@@ -90,9 +96,24 @@ def confirm_booking(slug):
         session_type=session_type,
         rate_charged=tutor.hourly_rate * (duration / 60),
         location=tutor.address if session_type == 'in_person' else '',
+        meeting_link=meeting_link,
     )
     db.session.add(session)
     db.session.commit()
+
+    # Send email notifications (non-blocking)
+    if parent_email:
+        send_booking_confirmation_async(
+            tutor_email=tutor.email,
+            tutor_name=tutor.full_name,
+            student_name=student_name,
+            student_email=parent_email,
+            session_datetime=scheduled_at,
+            duration_minutes=duration,
+            session_type=session_type,
+            subject=subject,
+            meeting_link=meeting_link if session_type == 'online' else None,
+        )
 
     return render_template('booking/confirmation.html',
         tutor=tutor,
