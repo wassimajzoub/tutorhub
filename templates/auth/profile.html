@@ -94,6 +94,15 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             placeholder="30 mins, 60 mins, 90 mins (comma-separated)">
                     </div>
+
+                    <div class="mt-4">
+                        <label for="default_meeting_link" class="block text-sm font-medium text-gray-700 mb-1">Default Meeting Link</label>
+                        <input type="url" id="default_meeting_link" name="default_meeting_link"
+                            value="{{ current_user.default_meeting_link or '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="https://meet.google.com/... or https://zoom.us/...">
+                        <p class="text-xs text-gray-500 mt-1">This link is automatically sent to students who book online sessions.</p>
+                    </div>
                 </div>
 
                 <!-- Contact Information Section -->
