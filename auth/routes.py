@@ -97,6 +97,7 @@ def profile():
         current_user.phone = request.form.get('phone', '').strip()
         current_user.address = request.form.get('address', '').strip()
         current_user.session_durations = request.form.get('session_durations', '60').strip()
+        current_user.default_meeting_link = request.form.get('default_meeting_link', '').strip()
 
         new_slug = request.form.get('profile_slug', '').strip()
         if new_slug and new_slug != current_user.profile_slug:
