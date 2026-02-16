@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
     address = db.Column(db.String(250), default='')            # for in-person sessions
     profile_slug = db.Column(db.String(80), unique=True, index=True)
     session_durations = db.Column(db.String(50), default='60') # comma-separated minutes
+    default_meeting_link = db.Column(db.String(500), default='')  # Google Meet/Zoom link
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
