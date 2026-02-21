@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Overview{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Payment Overview</h1>
+
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-indigo-500">
+      <p class="text-gray-600 text-sm font-medium">Total Unpaid Amount</p>
+      <p class="text-3xl font-bold text-indigo-600 mt-2">
+        ${{ "%.2f"|format(unpaid|sum(attribute='amount')) }}
+      </p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-indigo-500">
+      <p class="text-gray-600 text-sm font-medium">Unpaid Sessions</p>
+      <p class="text-3xl font-bold text-indigo-600 mt-2">{{ unpaid|length }}</p>
+    </div>
+  </div>
+
+  <!-- Outstanding by Student Section -->
+  <div class="mb-12">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Outstanding by Student</h2>
+
+    {% if student_balances %}
+      <div class="space-y-6">
+        {% for balance in student_balances %}
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">{{ balance.student.first_name }} {{ balance.student.last_name }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ balance.sessions|length }} unpaid sessions</p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">Amount Due</p>
+                <p class="text-2xl font-bold text-indigo-600">${{ "%.2f"|format(balance.total) }}</p>
+              </div>
+            </div>
+
+            <!-- Sessions List -->
+            <div class="bg-gray-50 rounded p-4 mb-4">
+              <div class="space-y-2">
+                {% for session in balance.sessions %}
+                  <div class="flex items-center justify-between text-sm">
+                    <div>
+                      <p class="text-gray-900">{{ session.scheduled_at.strftime('%B %d, %Y') }} at {{ session.time.strftime('%I:%M %p') }}</p>
+                      <p class="text-gray-600">{{ session.duration_minutes }} minutes</p>
+                    </div>
+                    <p class="font-semibold text-gray-900">${{ "%.2f"|format(session.amount) }}</p>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Generate Invoice Form -->
+            <form method="POST" action="{{ url_for('payments.generate_invoice') }}" class="flex items-center gap-4">
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 text-indigo-600 rounded" name="select_all" onchange="this.form.querySelectorAll('input[name=session_ids]').forEach(cb => cb.checked = this.checked)">
+                <span class="ml-2 text-sm text-gray-700">Select all</span>
+              </label>
+              <div class="flex-1">
+                <input type="hidden" name="student_id" value="{{ balance.student.id }}">
+                {% for session in balance.sessions %}
+                  <input type="checkbox" name="session_ids" value="{{ session.id }}" class="hidden">
+                {% endfor %}
+              </div>
+              <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+                Generate Invoice
+              </button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="bg-white rounded-lg shadow p-12 text-center">
+        <p class="text-gray-600 text-lg">No outstanding balances</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Unpaid Sessions Table -->
+  <div class="mb-12">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Unpaid Sessions</h2>
+
+    {% if unpaid %}
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-gray-50 border-b">
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Student</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Amount</th>
+              <th class="px-6 py-3 text-right text-sm font-semibold text-gray-900">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y">
+            {% for session in unpaid %}
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 text-sm text-gray-900">{{ session.scheduled_at.strftime('%B %d, %Y') }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ session.student.first_name }} {{ session.student.last_name }}</td>
+                <td class="px-6 py-4 text-sm font-semibold text-indigo-600">${{ "%.2f"|format(session.amount) }}</td>
+                <td class="px-6 py-4 text-right">
+                  <form method="POST" action="{{ url_for('scheduling.session_detail', session_id=session.id) }}" class="inline">
+                    <input type="hidden" name="action" value="mark_paid">
+                    <button type="submit" class="text-indigo-600 hover:text-indigo-700 font-medium text-sm transition-colors">
+                      Mark Paid
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="bg-white rounded-lg shadow p-12 text-center">
+        <p class="text-gray-600 text-lg">No unpaid sessions</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Payments Section -->
+  <div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Payments</h2>
+
+    {% if recent_paid %}
+      <div class="space-y-4">
+        {% for session in recent_paid %}
+          <div class="bg-white rounded-lg shadow p-4 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-gray-900">{{ session.student.first_name }} {{ session.student.last_name }}</p>
+              <p class="text-sm text-gray-600 mt-1">{{ session.scheduled_at.strftime('%B %d, %Y') }} - {{ session.duration_minutes }} minutes</p>
+            </div>
+            <p class="text-lg font-bold text-green-600">${{ "%.2f"|format(session.amount) }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="bg-white rounded-lg shadow p-12 text-center">
+        <p class="text-gray-600 text-lg">No recent payments</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
