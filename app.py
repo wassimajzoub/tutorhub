@@ -46,9 +46,31 @@ def create_app(config_name=None):
             return redirect(url_for('dashboard.index'))
         return render_template('landing.html')
 
-    # Create tables
+    # Create tables and run migrations
     with app.app_context():
         db.create_all()
+
+        # Auto-migration: add missing columns to existing tables
+        try:
+            from sqlalchemy import text, inspect
+            inspector = inspect(db.engine)
+            columns = [col['name'] for col in inspector.get_columns('users')]
+
+            if 'default_meeting_link' not in columns:
+                db.session.execute(text(
+                    "ALTER TABLE users ADD COLUMN default_meeting_link VARCHAR(500) DEFAULT ''"
+                ))
+                db.session.commit()
+                print("Migration: Added default_meeting_link column to users table")
+
+            if 'meeting_link' not in [col['name'] for col in inspector.get_columns('sessions')]:
+                db.session.execute(text(
+                    "ALTER TABLE sessions ADD COLUMN meeting_link VARCHAR(500) DEFAULT ''"
+                ))
+                db.session.commit()
+                print("Migration: Added meeting_link column to sessions table")
+        except Exception as e:
+            print(f"Migration check: {e}")
 
     return app
 
