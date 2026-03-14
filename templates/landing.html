@@ -1,125 +1,1008 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TutorHub - Manage Your Tutoring Business</title>
+  <title>TutorHub — Manage Your Tutoring Business</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Instrument Serif', 'Georgia', 'serif'],
+          },
+          colors: {
+            surface: {
+              DEFAULT: '#0a0a12',
+              50: '#0f0f1a',
+              100: '#16162a',
+              200: '#1e1e3a',
+            },
+            primary: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8',
+              dark: '#4f46e5',
+            },
+            accent: {
+              DEFAULT: '#a855f7',
+              light: '#c084fc',
+              cyan: '#22d3ee',
+            },
+            txt: {
+              primary: '#f1f5f9',
+              secondary: '#94a3b8',
+              muted: '#64748b',
+            },
+          },
+        },
+      },
+    }
+  </script>
+
   <style>
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    .fade-in { animation: fadeIn 0.6s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    /* ===== BASE ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #0a0a12; color: #f1f5f9; overflow-x: hidden; }
+
+    /* ===== GRADIENT ANIMATIONS ===== */
+    .hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: conic-gradient(from 0deg at 50% 50%, #6366f1, #a855f7, #22d3ee, #ec4899, #6366f1);
+      filter: blur(140px);
+      opacity: 0.3;
+      animation: gradientShift 20s ease-in-out infinite;
+      transform: scale(1.5);
+    }
+    @keyframes gradientShift {
+      0%, 100% { transform: rotate(0deg) scale(1.5); }
+      25% { transform: rotate(90deg) scale(1.8); }
+      50% { transform: rotate(180deg) scale(1.5); }
+      75% { transform: rotate(270deg) scale(1.8); }
+    }
+
+    /* ===== DOT GRID ===== */
+    .dot-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+    }
+
+    /* ===== RADIAL GLOW ===== */
+    .radial-glow {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ===== NAVBAR ===== */
+    .nav-scrolled {
+      background: rgba(10, 10, 18, 0.85) !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+    }
+
+    /* ===== GLASSMORPHISM ===== */
+    .glass-card {
+      background: rgba(15, 15, 26, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(99, 102, 241, 0.08);
+      border-radius: 1rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== BENTO CARD EFFECTS ===== */
+    .bento-card { position: relative; overflow: hidden; }
+
+    .bento-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: conic-gradient(from var(--angle, 0deg), transparent 60%, #6366f1, #a855f7, transparent 100%);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .bento-card:hover::before {
+      opacity: 1;
+      animation: rotateGradient 3s linear infinite;
+    }
+
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes rotateGradient {
+      to { --angle: 360deg; }
+    }
+
+    .bento-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.06), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .bento-card:hover::after { opacity: 1; }
+    .bento-card:hover { border-color: rgba(99, 102, 241, 0.15); transform: translateY(-2px); }
+
+    /* ===== MARQUEE ===== */
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .logo-track {
+      display: flex;
+      gap: 4rem;
+      animation: marquee 35s linear infinite;
+      width: max-content;
+    }
+    .logo-track:hover { animation-play-state: paused; }
+
+    /* ===== GRADIENT TEXT ===== */
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1, #a855f7, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ===== CTA BUTTON ===== */
+    .cta-btn {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.25), 0 0 80px rgba(99, 102, 241, 0.08);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(99, 102, 241, 0.35), 0 0 120px rgba(99, 102, 241, 0.12);
+    }
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(transparent, rgba(255,255,255,0.08), transparent);
+      transform: rotate(45deg) translateX(-100%);
+      transition: transform 0.6s;
+    }
+    .cta-btn:hover::after { transform: rotate(45deg) translateX(100%); }
+
+    /* ===== GHOST BUTTON ===== */
+    .ghost-btn {
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      transition: all 0.3s;
+    }
+    .ghost-btn:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    /* ===== FLOATING ORBS ===== */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 400px; height: 400px;
+      background: rgba(99, 102, 241, 0.2);
+      top: -10%; left: -5%;
+      animation: orbDrift1 12s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 350px; height: 350px;
+      background: rgba(168, 85, 247, 0.15);
+      bottom: -10%; right: -5%;
+      animation: orbDrift2 15s ease-in-out infinite;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: rgba(34, 211, 238, 0.1);
+      top: 30%; right: 20%;
+      animation: orbDrift3 18s ease-in-out infinite;
+    }
+    @keyframes orbDrift1 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(60px, 40px); }
+    }
+    @keyframes orbDrift2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-50px, -30px); }
+    }
+    @keyframes orbDrift3 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-40px, 50px); }
+    }
+
+    /* ===== CONNECTING LINE ===== */
+    .connecting-line {
+      height: 2px;
+      background: linear-gradient(to right, #6366f1, #a855f7);
+      transform-origin: left center;
+    }
+
+    /* ===== TESTIMONIAL MASONRY ===== */
+    .testimonials-grid {
+      columns: 1;
+      column-gap: 1.5rem;
+    }
+    @media (min-width: 768px) { .testimonials-grid { columns: 2; } }
+    @media (min-width: 1024px) { .testimonials-grid { columns: 3; } }
+    .testimonial-card { break-inside: avoid; margin-bottom: 1.5rem; }
+
+    /* ===== SECTION GRADIENT DIVIDER ===== */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.2), transparent);
+    }
+
+    /* ===== BROWSER MOCKUP ===== */
+    .browser-frame {
+      border: 1px solid rgba(99, 102, 241, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0f0f1a;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 80px rgba(99, 102, 241, 0.08);
+    }
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      background: #16162a;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.06);
+    }
+    .browser-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    /* ===== STEP NUMBER ===== */
+    .step-number {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 15, 26, 0.8);
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #818cf8;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-menu { display: none; }
+    .mobile-menu.active { display: flex; }
+
+    /* ===== STAR ===== */
+    .star { color: #eab308; }
   </style>
 </head>
-<body class="bg-white min-h-screen">
 
-  <!-- Navbar -->
-  <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+<body class="antialiased">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style="background: transparent;">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <div class="flex justify-between h-16 items-center">
-        <a href="/" class="text-xl font-bold text-indigo-600">TutorHub</a>
-        <div class="flex items-center space-x-4">
-          <a href="{{ url_for('auth.login') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">Sign In</a>
-          <a href="{{ url_for('auth.signup') }}" class="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Get Started Free</a>
+        <a href="/" class="text-xl font-bold gradient-text">TutorHub</a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#features" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">Features</a>
+          <a href="#how-it-works" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">How It Works</a>
+          <a href="#testimonials" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">Testimonials</a>
         </div>
+
+        <div class="hidden md:flex items-center space-x-4">
+          <a href="{{ url_for('auth.login') }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors font-medium">Sign In</a>
+          <a href="{{ url_for('auth.signup') }}" class="cta-btn text-sm text-white px-5 py-2 rounded-lg font-medium">Get Started Free</a>
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button id="mobile-toggle" class="md:hidden text-txt-secondary hover:text-txt-primary">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="mobile-menu flex-col pb-4 space-y-3 md:hidden">
+        <a href="#features" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">Features</a>
+        <a href="#how-it-works" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">How It Works</a>
+        <a href="#testimonials" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">Testimonials</a>
+        <a href="{{ url_for('auth.login') }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors font-medium">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="cta-btn text-sm text-white px-5 py-2 rounded-lg font-medium text-center">Get Started Free</a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="fade-in">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-16 text-center">
-      <span class="inline-block bg-indigo-50 text-indigo-600 text-xs font-semibold px-3 py-1 rounded-full mb-6">Built for independent tutors</span>
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+  <!-- ==================== HERO ==================== -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Background layers -->
+    <div class="hero-gradient"></div>
+    <div class="dot-grid"></div>
+    <div class="radial-glow"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-20 text-center">
+      <!-- Badge -->
+      <div class="hero-badge inline-flex items-center gap-2 bg-surface-100/60 border border-primary/20 rounded-full px-4 py-1.5 mb-8">
+        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+        <span class="text-xs font-medium text-txt-secondary">Built for independent tutors</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="hero-title text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight mb-6 tracking-tight">
         Everything you need to<br />
-        <span class="text-indigo-600">run your tutoring business</span>
+        <span class="gradient-text">run your tutoring</span>
+        <span class="font-serif italic text-accent-light"> business</span>
       </h1>
-      <p class="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-10">
+
+      <!-- Subtitle -->
+      <p class="hero-subtitle text-lg sm:text-xl text-txt-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
         Manage students, schedule sessions, track payments, and let clients book you online &mdash; all from one simple dashboard.
       </p>
-      <div class="flex justify-center space-x-4">
-        <a href="{{ url_for('auth.signup') }}" class="bg-indigo-600 text-white text-base font-semibold px-8 py-3 rounded-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">Start for Free</a>
-        <a href="#features" class="bg-white text-gray-700 text-base font-semibold px-8 py-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition">See Features</a>
+
+      <!-- CTAs -->
+      <div class="hero-ctas flex flex-col sm:flex-row justify-center gap-4">
+        <a href="{{ url_for('auth.signup') }}" class="cta-btn text-white text-base font-semibold px-8 py-3.5 rounded-xl">
+          Start for Free
+        </a>
+        <a href="#features" class="ghost-btn text-txt-secondary text-base font-semibold px-8 py-3.5 rounded-xl">
+          See Features
+        </a>
+      </div>
+
+      <!-- Browser Mockup -->
+      <div class="hero-mockup mt-16 max-w-4xl mx-auto">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="browser-dot" style="background: #ff5f57;"></div>
+            <div class="browser-dot" style="background: #febc2e;"></div>
+            <div class="browser-dot" style="background: #28c840;"></div>
+            <div class="flex-1 flex justify-center">
+              <div class="bg-surface-200/50 rounded-md px-3 py-1 text-xs text-txt-muted">tutorhub.app/dashboard</div>
+            </div>
+          </div>
+          <!-- Dashboard preview -->
+          <div class="p-6 sm:p-8 space-y-6">
+            <!-- Top bar -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold text-txt-primary">Good morning, Sarah</div>
+                <div class="text-xs text-txt-muted mt-0.5">You have 4 sessions today</div>
+              </div>
+              <div class="flex gap-2">
+                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <i data-lucide="bell" class="w-4 h-4 text-primary-light"></i>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-white">S</div>
+              </div>
+            </div>
+            <!-- Stats row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/50">
+                <div class="text-xs text-txt-muted">Students</div>
+                <div class="text-lg font-bold text-txt-primary mt-0.5">24</div>
+              </div>
+              <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/50">
+                <div class="text-xs text-txt-muted">This Week</div>
+                <div class="text-lg font-bold text-txt-primary mt-0.5">12 sessions</div>
+              </div>
+              <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/50">
+                <div class="text-xs text-txt-muted">Revenue</div>
+                <div class="text-lg font-bold text-green-400 mt-0.5">$2,840</div>
+              </div>
+              <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/50">
+                <div class="text-xs text-txt-muted">Pending</div>
+                <div class="text-lg font-bold text-amber-400 mt-0.5">$460</div>
+              </div>
+            </div>
+            <!-- Schedule preview -->
+            <div class="space-y-2">
+              <div class="text-xs font-semibold text-txt-secondary uppercase tracking-wider">Today's Schedule</div>
+              <div class="flex items-center gap-3 bg-surface-100/60 rounded-lg p-3 border border-surface-200/30">
+                <div class="w-1 h-10 rounded-full bg-primary"></div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-txt-primary">Alex Chen — Calculus II</div>
+                  <div class="text-xs text-txt-muted">9:00 AM – 10:00 AM</div>
+                </div>
+                <div class="text-xs bg-primary/10 text-primary-light px-2 py-1 rounded-md">In 30 min</div>
+              </div>
+              <div class="flex items-center gap-3 bg-surface-100/60 rounded-lg p-3 border border-surface-200/30">
+                <div class="w-1 h-10 rounded-full bg-accent"></div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-txt-primary">Maya Johnson — Physics 101</div>
+                  <div class="text-xs text-txt-muted">11:00 AM – 12:00 PM</div>
+                </div>
+                <div class="text-xs bg-surface-200/50 text-txt-muted px-2 py-1 rounded-md">Upcoming</div>
+              </div>
+              <div class="flex items-center gap-3 bg-surface-100/60 rounded-lg p-3 border border-surface-200/30">
+                <div class="w-1 h-10 rounded-full bg-accent-cyan"></div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-txt-primary">Ryan Patel — SAT Prep</div>
+                  <div class="text-xs text-txt-muted">2:00 PM – 3:30 PM</div>
+                </div>
+                <div class="text-xs bg-surface-200/50 text-txt-muted px-2 py-1 rounded-md">Upcoming</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section id="features" class="bg-gray-50 py-20">
+  <!-- ==================== SOCIAL PROOF ==================== -->
+  <div class="section-divider"></div>
+  <section class="py-16 relative overflow-hidden">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold text-gray-900 mb-4">Everything in one place</h2>
-        <p class="text-gray-500 text-lg max-w-xl mx-auto">Stop juggling spreadsheets, calendars, and payment apps. TutorHub brings it all together.</p>
+      <!-- Logo marquee -->
+      <div class="text-center mb-8">
+        <p class="text-xs text-txt-muted uppercase tracking-widest font-medium">Trusted by educators at</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="relative overflow-hidden mb-16" style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
+        <div class="logo-track">
+          <!-- Logos (text-based for simplicity, duplicated for seamless loop) -->
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Harvard Tutoring</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Stanford Learning</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">MIT Prep Academy</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Oxford Scholars</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Yale Education</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Princeton Tutors</span>
+          <!-- Duplicate for seamless loop -->
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Harvard Tutoring</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Stanford Learning</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">MIT Prep Academy</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Oxford Scholars</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Yale Education</span>
+          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Princeton Tutors</span>
+        </div>
+      </div>
 
-        <div class="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition">
-          <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+      <!-- Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8" data-animate="stagger">
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-extrabold gradient-text mb-1" data-count="500">0</div>
+          <div class="text-sm text-txt-muted uppercase tracking-wider font-medium">Active Tutors</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-extrabold gradient-text mb-1" data-count="10000">0</div>
+          <div class="text-sm text-txt-muted uppercase tracking-wider font-medium">Sessions Booked</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-extrabold gradient-text mb-1" data-count="2" data-prefix="$" data-suffix="M">0</div>
+          <div class="text-sm text-txt-muted uppercase tracking-wider font-medium">Payments Processed</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-extrabold gradient-text mb-1" data-count="4.9" data-decimal="true">0</div>
+          <div class="text-sm text-txt-muted uppercase tracking-wider font-medium">Average Rating</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FEATURES BENTO GRID ==================== -->
+  <div class="section-divider"></div>
+  <section id="features" class="py-24 relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <!-- Section heading -->
+      <div class="text-center mb-16 section-heading">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+          Everything in <span class="gradient-text">one place</span>
+        </h2>
+        <p class="text-txt-secondary text-lg max-w-xl mx-auto">
+          Stop juggling spreadsheets, calendars, and payment apps. TutorHub brings it all together.
+        </p>
+      </div>
+
+      <!-- Bento Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5" data-animate="stagger">
+
+        <!-- Feature 1: Student Management (large) -->
+        <div class="glass-card bento-card p-8 lg:col-span-2">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="users" class="w-6 h-6 text-primary-light"></i>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Student Management</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Keep track of all your students, their contact info, subjects, and session history in one organized place.</p>
+          <h3 class="text-xl font-semibold text-txt-primary mb-2">Student Management</h3>
+          <p class="text-txt-secondary leading-relaxed mb-6">Keep track of all your students, their contact info, subjects, and session history in one organized place.</p>
+          <!-- Mini visual -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/30">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 mb-2 flex items-center justify-center text-[10px] font-bold">A</div>
+              <div class="text-xs font-medium text-txt-primary">Alex C.</div>
+              <div class="text-[10px] text-txt-muted">Calculus</div>
+            </div>
+            <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/30">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 mb-2 flex items-center justify-center text-[10px] font-bold">M</div>
+              <div class="text-xs font-medium text-txt-primary">Maya J.</div>
+              <div class="text-[10px] text-txt-muted">Physics</div>
+            </div>
+            <div class="bg-surface-100/80 rounded-lg p-3 border border-surface-200/30">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 mb-2 flex items-center justify-center text-[10px] font-bold">R</div>
+              <div class="text-xs font-medium text-txt-primary">Ryan P.</div>
+              <div class="text-[10px] text-txt-muted">SAT Prep</div>
+            </div>
+          </div>
         </div>
 
-        <div class="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition">
-          <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        <!-- Feature 2: Session Scheduling -->
+        <div class="glass-card bento-card p-8">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="calendar" class="w-6 h-6 text-primary-light"></i>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Session Scheduling</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Schedule one-time or recurring sessions, set your availability, and never double-book again.</p>
+          <h3 class="text-xl font-semibold text-txt-primary mb-2">Smart Scheduling</h3>
+          <p class="text-txt-secondary text-sm leading-relaxed">Schedule one-time or recurring sessions, set your availability, and never double-book again.</p>
         </div>
 
-        <div class="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition">
-          <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+        <!-- Feature 3: Payment Tracking -->
+        <div class="glass-card bento-card p-8">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="credit-card" class="w-6 h-6 text-primary-light"></i>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Payment Tracking</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Log payments, track who owes what, and keep a clear record of your tutoring income.</p>
+          <h3 class="text-xl font-semibold text-txt-primary mb-2">Payment Tracking</h3>
+          <p class="text-txt-secondary text-sm leading-relaxed">Log payments, track who owes what, and keep a clear record of your tutoring income.</p>
         </div>
 
-        <div class="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition">
-          <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+        <!-- Feature 4: Online Booking -->
+        <div class="glass-card bento-card p-8">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="globe" class="w-6 h-6 text-primary-light"></i>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Online Booking Page</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Share your personal booking link so students can see your availability and book sessions themselves.</p>
+          <h3 class="text-xl font-semibold text-txt-primary mb-2">Online Booking</h3>
+          <p class="text-txt-secondary text-sm leading-relaxed">Share your personal booking link so students can see your availability and book sessions themselves.</p>
         </div>
 
-        <div class="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition">
-          <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+        <!-- Feature 5: Dashboard Analytics -->
+        <div class="glass-card bento-card p-8">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="bar-chart-3" class="w-6 h-6 text-primary-light"></i>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Dashboard Overview</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">See your upcoming sessions, recent activity, and key stats at a glance from your personal dashboard.</p>
+          <h3 class="text-xl font-semibold text-txt-primary mb-2">Analytics Dashboard</h3>
+          <p class="text-txt-secondary text-sm leading-relaxed">See your upcoming sessions, recent activity, and key stats at a glance.</p>
         </div>
 
-        <div class="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition">
-          <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+        <!-- Feature 6: Secure & Private (large) -->
+        <div class="glass-card bento-card p-8 lg:col-span-2">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="shield-check" class="w-6 h-6 text-primary-light"></i>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Secure &amp; Private</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Your data is protected with secure authentication. Only you can access your students and business info.</p>
+          <h3 class="text-xl font-semibold text-txt-primary mb-2">Secure &amp; Private</h3>
+          <p class="text-txt-secondary leading-relaxed mb-6">Your data is protected with secure authentication and encryption. Only you can access your students and business info.</p>
+          <!-- Mini visual -->
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 bg-surface-100/80 rounded-lg px-3 py-2 border border-surface-200/30">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-green-400"></i>
+              <span class="text-xs text-green-400 font-medium">256-bit SSL</span>
+            </div>
+            <div class="flex items-center gap-2 bg-surface-100/80 rounded-lg px-3 py-2 border border-surface-200/30">
+              <i data-lucide="fingerprint" class="w-3.5 h-3.5 text-primary-light"></i>
+              <span class="text-xs text-primary-light font-medium">2FA Ready</span>
+            </div>
+            <div class="flex items-center gap-2 bg-surface-100/80 rounded-lg px-3 py-2 border border-surface-200/30">
+              <i data-lucide="database" class="w-3.5 h-3.5 text-accent-cyan"></i>
+              <span class="text-xs text-accent-cyan font-medium">Daily Backups</span>
+            </div>
+          </div>
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="py-20">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to simplify your tutoring?</h2>
-      <p class="text-gray-500 text-lg mb-8">Join TutorHub today and spend less time on admin, more time teaching.</p>
-      <a href="{{ url_for('auth.signup') }}" class="inline-block bg-indigo-600 text-white text-base font-semibold px-8 py-3 rounded-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">Create Your Free Account</a>
+  <!-- ==================== HOW IT WORKS ==================== -->
+  <div class="section-divider"></div>
+  <section id="how-it-works" class="py-24 relative overflow-hidden">
+    <div class="radial-glow" style="top: 30%; opacity: 0.5;"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+      <!-- Section heading -->
+      <div class="text-center mb-20 section-heading">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+          Up and running in <span class="gradient-text">minutes</span>
+        </h2>
+        <p class="text-txt-secondary text-lg max-w-xl mx-auto">
+          Three simple steps to transform how you manage your tutoring business.
+        </p>
+      </div>
+
+      <!-- Steps -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-0 relative">
+
+        <!-- Connecting lines (desktop only) -->
+        <div class="hidden lg:block absolute top-8 left-[20%] right-[20%] z-0">
+          <div class="connecting-line w-full" id="connect-line"></div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="relative z-10 text-center step-item">
+          <div class="step-number mx-auto mb-6">1</div>
+          <div class="glass-card p-6 mx-4">
+            <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="user-plus" class="w-5 h-5 text-primary-light"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-txt-primary mb-2">Create Your Account</h3>
+            <p class="text-sm text-txt-secondary leading-relaxed">Sign up in seconds. No credit card required. Start with a free plan.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative z-10 text-center step-item">
+          <div class="step-number mx-auto mb-6">2</div>
+          <div class="glass-card p-6 mx-4">
+            <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="settings" class="w-5 h-5 text-accent-light"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-txt-primary mb-2">Set Up Your Profile</h3>
+            <p class="text-sm text-txt-secondary leading-relaxed">Add your subjects, rates, availability, and share your booking page link.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative z-10 text-center step-item">
+          <div class="step-number mx-auto mb-6">3</div>
+          <div class="glass-card p-6 mx-4">
+            <div class="w-10 h-10 rounded-lg bg-accent-cyan/10 flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="rocket" class="w-5 h-5 text-accent-cyan"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-txt-primary mb-2">Start Teaching</h3>
+            <p class="text-sm text-txt-secondary leading-relaxed">Students book sessions, you teach, payments get tracked. It just works.</p>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="border-t border-gray-100 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-      <p class="text-sm text-gray-400">&copy; 2026 TutorHub. All rights reserved.</p>
+  <!-- ==================== TESTIMONIALS ==================== -->
+  <div class="section-divider"></div>
+  <section id="testimonials" class="py-24 relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <!-- Section heading -->
+      <div class="text-center mb-16 section-heading">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+          Loved by <span class="gradient-text">tutors everywhere</span>
+        </h2>
+        <p class="text-txt-secondary text-lg max-w-xl mx-auto">
+          See what educators are saying about TutorHub.
+        </p>
+      </div>
+
+      <!-- Masonry grid -->
+      <div class="testimonials-grid" data-animate="stagger">
+
+        <div class="testimonial-card glass-card p-6">
+          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <p class="text-txt-secondary italic leading-relaxed mb-4">TutorHub completely changed how I manage my tutoring business. I used to spend hours on spreadsheets — now everything is automated.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-sm font-bold">S</div>
+            <div>
+              <div class="text-sm font-semibold text-txt-primary">Sarah Mitchell</div>
+              <div class="text-xs text-txt-muted">Math Tutor, Boston</div>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mt-3">
+            <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass-card p-6">
+          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <p class="text-txt-secondary italic leading-relaxed mb-4">The booking page is a game-changer. My students just pick a time and it shows up in my dashboard. No more back-and-forth texts.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-sm font-bold">J</div>
+            <div>
+              <div class="text-sm font-semibold text-txt-primary">James Park</div>
+              <div class="text-xs text-txt-muted">Science Tutor, LA</div>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mt-3">
+            <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass-card p-6">
+          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <p class="text-txt-secondary italic leading-relaxed mb-4">I went from chasing payments via Venmo to having a professional payment system. My income tracking is finally organized and I feel like a real business.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-sm font-bold">A</div>
+            <div>
+              <div class="text-sm font-semibold text-txt-primary">Aisha Rahman</div>
+              <div class="text-xs text-txt-muted">Language Tutor, NYC</div>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mt-3">
+            <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass-card p-6">
+          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <p class="text-txt-secondary italic leading-relaxed mb-4">Simple, clean, and does exactly what I need. The dashboard gives me a quick overview without overwhelming me.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-sm font-bold">D</div>
+            <div>
+              <div class="text-sm font-semibold text-txt-primary">David Kim</div>
+              <div class="text-xs text-txt-muted">Piano Teacher, Chicago</div>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mt-3">
+            <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass-card p-6">
+          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <p class="text-txt-secondary italic leading-relaxed mb-4">I was skeptical at first but TutorHub has saved me at least 5 hours a week. The recurring session feature is brilliant — set it once and forget it.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-sm font-bold">L</div>
+            <div>
+              <div class="text-sm font-semibold text-txt-primary">Lisa Chen</div>
+              <div class="text-xs text-txt-muted">SAT Prep Tutor, SF</div>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mt-3">
+            <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+          </div>
+        </div>
+
+        <div class="testimonial-card glass-card p-6">
+          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <p class="text-txt-secondary italic leading-relaxed mb-4">As someone who tutors 30+ students, keeping track of everyone was a nightmare. TutorHub made it manageable and even enjoyable.</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-sm font-bold">M</div>
+            <div>
+              <div class="text-sm font-semibold text-txt-primary">Marcus Williams</div>
+              <div class="text-xs text-txt-muted">English Tutor, Austin</div>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mt-3">
+            <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FINAL CTA ==================== -->
+  <div class="section-divider"></div>
+  <section class="py-32 relative overflow-hidden">
+    <!-- Floating orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-sm text-primary-light font-medium uppercase tracking-widest mb-4 section-heading">Ready to transform your tutoring business?</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight section-heading">
+        Start managing smarter,<br />
+        <span class="font-serif italic text-accent-light">today</span>
+      </h2>
+      <p class="text-txt-secondary text-lg mb-10 section-heading">Free forever for up to 5 students. No credit card required.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 section-heading">
+        <a href="{{ url_for('auth.signup') }}" class="cta-btn text-white text-lg font-semibold px-10 py-4 rounded-xl">
+          Create Your Free Account
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <div class="section-divider"></div>
+  <footer class="py-16 relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <!-- Brand -->
+        <div class="col-span-2 md:col-span-1">
+          <a href="/" class="text-xl font-bold gradient-text">TutorHub</a>
+          <p class="text-sm text-txt-muted mt-3 leading-relaxed">The all-in-one platform for modern tutoring businesses.</p>
+        </div>
+        <!-- Product -->
+        <div>
+          <h4 class="text-xs font-semibold text-txt-primary uppercase tracking-wider mb-4">Product</h4>
+          <ul class="space-y-2">
+            <li><a href="#features" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Features</a></li>
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Pricing</a></li>
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Changelog</a></li>
+          </ul>
+        </div>
+        <!-- Company -->
+        <div>
+          <h4 class="text-xs font-semibold text-txt-primary uppercase tracking-wider mb-4">Company</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">About</a></li>
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Blog</a></li>
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <!-- Legal -->
+        <div>
+          <h4 class="text-xs font-semibold text-txt-primary uppercase tracking-wider mb-4">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Privacy</a></li>
+            <li><a href="#" class="text-sm text-txt-muted hover:text-txt-primary transition-colors">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="section-divider mb-8"></div>
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p class="text-xs text-txt-muted">&copy; 2026 TutorHub. All rights reserved.</p>
+        <p class="text-xs text-txt-muted">Built with &hearts; for educators everywhere.</p>
+      </div>
     </div>
   </footer>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Register GSAP plugins
+      gsap.registerPlugin(ScrollTrigger);
+
+      // ===== NAVBAR SCROLL =====
+      const nav = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+      });
+
+      // ===== MOBILE MENU =====
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+      });
+
+      // ===== HERO ENTRANCE ANIMATIONS =====
+      const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      heroTl
+        .from('.hero-badge', { opacity: 0, y: 20, duration: 0.6 })
+        .from('.hero-title', { opacity: 0, y: 30, duration: 0.8 }, '-=0.3')
+        .from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.6 }, '-=0.4')
+        .from('.hero-ctas', { opacity: 0, y: 20, duration: 0.6 }, '-=0.3')
+        .from('.hero-mockup', { opacity: 0, y: 80, duration: 1.2, ease: 'power2.out' }, '-=0.4');
+
+      // ===== SECTION HEADING REVEALS =====
+      gsap.utils.toArray('.section-heading').forEach(el => {
+        gsap.from(el, {
+          scrollTrigger: { trigger: el, start: 'top 85%' },
+          opacity: 0, y: 30, duration: 0.8, ease: 'power2.out',
+        });
+      });
+
+      // ===== STAGGERED CARD REVEALS =====
+      gsap.utils.toArray('[data-animate="stagger"]').forEach(container => {
+        gsap.from(container.children, {
+          scrollTrigger: { trigger: container, start: 'top 80%' },
+          opacity: 0, y: 40, stagger: 0.1, duration: 0.7, ease: 'power2.out',
+        });
+      });
+
+      // ===== BENTO CARD MOUSE GLOW =====
+      document.querySelectorAll('.bento-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+      });
+
+      // ===== HOW IT WORKS ANIMATIONS =====
+      // Line draw
+      const connectLine = document.getElementById('connect-line');
+      if (connectLine) {
+        gsap.fromTo(connectLine,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            scrollTrigger: {
+              trigger: '#how-it-works',
+              start: 'top 60%',
+              end: 'top 30%',
+              scrub: 1,
+            },
+          }
+        );
+      }
+
+      // Step items stagger
+      gsap.from('.step-item', {
+        scrollTrigger: { trigger: '#how-it-works', start: 'top 65%' },
+        opacity: 0, y: 50, stagger: 0.2, duration: 0.8, ease: 'power2.out',
+      });
+
+      // ===== TESTIMONIAL CARDS =====
+      gsap.from('.testimonial-card', {
+        scrollTrigger: { trigger: '#testimonials', start: 'top 75%' },
+        opacity: 0, y: 30, stagger: 0.08, duration: 0.6, ease: 'power2.out',
+      });
+
+      // ===== STAT COUNTERS =====
+      const counterElements = document.querySelectorAll('[data-count]');
+
+      function animateCounter(el) {
+        const target = parseFloat(el.dataset.count);
+        const isDecimal = el.dataset.decimal === 'true';
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '+';
+        const duration = 2000;
+        let start = null;
+
+        function step(timestamp) {
+          if (!start) start = timestamp;
+          const progress = Math.min((timestamp - start) / duration, 1);
+          // Ease out cubic
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = eased * target;
+
+          if (isDecimal) {
+            el.textContent = prefix + current.toFixed(1) + suffix;
+          } else {
+            el.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          }
+        }
+        requestAnimationFrame(step);
+      }
+
+      // Trigger counters on scroll
+      const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            statsObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      counterElements.forEach(el => statsObserver.observe(el));
+
+    });
+  </script>
 
 </body>
 </html>
