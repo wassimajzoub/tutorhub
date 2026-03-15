@@ -88,8 +88,8 @@
                     <a href="{{ url_for('dashboard.index') }}" class="text-lg font-bold gradient-text">TutorHub</a>
                     <a href="{{ url_for('dashboard.index') }}" class="text-sm transition-colors {% if request.endpoint == 'dashboard.index' %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Dashboard</a>
                     <a href="{{ url_for('students.list_students') }}" class="text-sm transition-colors {% if 'students' in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Students</a>
-                    <a href="{{ url_for('scheduling.sessions_list') }}" class="text-sm transition-colors {% if 'scheduling' in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Sessions</a>
-                    <a href="{{ url_for('scheduling.availability') }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">Availability</a>
+                    <a href="{{ url_for('scheduling.sessions_list') }}" class="text-sm transition-colors {% if 'scheduling' in request.endpoint and 'availability' not in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Sessions</a>
+                    <a href="{{ url_for('scheduling.availability') }}" class="text-sm transition-colors {% if request.endpoint == 'scheduling.availability' %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Availability</a>
                     <a href="{{ url_for('payments.overview') }}" class="text-sm transition-colors {% if 'payments' in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Payments</a>
                 </div>
                 <div class="flex items-center space-x-4">
