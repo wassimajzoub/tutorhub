@@ -101,18 +101,18 @@
 
     /* ===== NAVBAR ===== */
     .nav-scrolled {
-      background: rgba(10, 10, 18, 0.85) !important;
+      background: rgba(10, 10, 18, 0.9) !important;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.15);
     }
 
     /* ===== GLASSMORPHISM ===== */
     .glass-card {
-      background: rgba(15, 15, 26, 0.6);
+      background: rgba(22, 22, 42, 0.8);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.18);
       border-radius: 1rem;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
@@ -157,7 +157,7 @@
       pointer-events: none;
     }
     .bento-card:hover::after { opacity: 1; }
-    .bento-card:hover { border-color: rgba(99, 102, 241, 0.15); transform: translateY(-2px); }
+    .bento-card:hover { border-color: rgba(99, 102, 241, 0.35); transform: translateY(-2px); }
 
     /* ===== MARQUEE ===== */
     @keyframes marquee {
@@ -272,8 +272,32 @@
     /* ===== SECTION GRADIENT DIVIDER ===== */
     .section-divider {
       height: 1px;
-      background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.2), transparent);
+      background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.3), transparent);
     }
+
+    /* ===== SECTION BACKGROUNDS ===== */
+    .section-alt {
+      background: linear-gradient(180deg, rgba(15, 15, 26, 0.5) 0%, transparent 50%, rgba(15, 15, 26, 0.5) 100%);
+    }
+    .section-glow {
+      position: relative;
+    }
+    .section-glow::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ===== GSAP REVEAL FALLBACK ===== */
+    /* Elements start visible; GSAP adds .gsap-hidden then animates opacity back */
+    .gsap-hidden { opacity: 0; transform: translateY(30px); }
+    .gsap-revealed { opacity: 1 !important; transform: translateY(0) !important; }
 
     /* ===== BROWSER MOCKUP ===== */
     .browser-frame {
@@ -303,11 +327,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(15, 15, 26, 0.8);
-      border: 2px solid rgba(99, 102, 241, 0.3);
+      background: rgba(22, 22, 42, 0.9);
+      border: 2px solid rgba(99, 102, 241, 0.5);
       font-size: 1.5rem;
       font-weight: 700;
       color: #818cf8;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
     }
 
     /* ===== MOBILE NAV ===== */
@@ -483,19 +508,19 @@
       <div class="relative overflow-hidden mb-16" style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
         <div class="logo-track">
           <!-- Logos (text-based for simplicity, duplicated for seamless loop) -->
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Harvard Tutoring</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Stanford Learning</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">MIT Prep Academy</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Oxford Scholars</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Yale Education</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Princeton Tutors</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Harvard Tutoring</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Stanford Learning</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">MIT Prep Academy</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Oxford Scholars</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Yale Education</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Princeton Tutors</span>
           <!-- Duplicate for seamless loop -->
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Harvard Tutoring</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Stanford Learning</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">MIT Prep Academy</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Oxford Scholars</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Yale Education</span>
-          <span class="text-lg font-semibold text-txt-muted/40 whitespace-nowrap">Princeton Tutors</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Harvard Tutoring</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Stanford Learning</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">MIT Prep Academy</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Oxford Scholars</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Yale Education</span>
+          <span class="text-lg font-semibold text-txt-muted whitespace-nowrap">Princeton Tutors</span>
         </div>
       </div>
 
@@ -523,7 +548,7 @@
 
   <!-- ==================== FEATURES BENTO GRID ==================== -->
   <div class="section-divider"></div>
-  <section id="features" class="py-24 relative">
+  <section id="features" class="py-24 relative section-alt section-glow">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <!-- Section heading -->
       <div class="text-center mb-16 section-heading">
@@ -631,7 +656,7 @@
 
   <!-- ==================== HOW IT WORKS ==================== -->
   <div class="section-divider"></div>
-  <section id="how-it-works" class="py-24 relative overflow-hidden">
+  <section id="how-it-works" class="py-24 relative overflow-hidden section-glow">
     <div class="radial-glow" style="top: 30%; opacity: 0.5;"></div>
     <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
       <!-- Section heading -->
@@ -694,7 +719,7 @@
 
   <!-- ==================== TESTIMONIALS ==================== -->
   <div class="section-divider"></div>
-  <section id="testimonials" class="py-24 relative">
+  <section id="testimonials" class="py-24 relative section-alt">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <!-- Section heading -->
       <div class="text-center mb-16 section-heading">
@@ -710,7 +735,7 @@
       <div class="testimonials-grid" data-animate="stagger">
 
         <div class="testimonial-card glass-card p-6">
-          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <div class="text-5xl font-serif gradient-text opacity-60 leading-none mb-2">&ldquo;</div>
           <p class="text-txt-secondary italic leading-relaxed mb-4">TutorHub completely changed how I manage my tutoring business. I used to spend hours on spreadsheets — now everything is automated.</p>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-sm font-bold">S</div>
@@ -725,7 +750,7 @@
         </div>
 
         <div class="testimonial-card glass-card p-6">
-          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <div class="text-5xl font-serif gradient-text opacity-60 leading-none mb-2">&ldquo;</div>
           <p class="text-txt-secondary italic leading-relaxed mb-4">The booking page is a game-changer. My students just pick a time and it shows up in my dashboard. No more back-and-forth texts.</p>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-sm font-bold">J</div>
@@ -740,7 +765,7 @@
         </div>
 
         <div class="testimonial-card glass-card p-6">
-          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <div class="text-5xl font-serif gradient-text opacity-60 leading-none mb-2">&ldquo;</div>
           <p class="text-txt-secondary italic leading-relaxed mb-4">I went from chasing payments via Venmo to having a professional payment system. My income tracking is finally organized and I feel like a real business.</p>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-sm font-bold">A</div>
@@ -755,7 +780,7 @@
         </div>
 
         <div class="testimonial-card glass-card p-6">
-          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <div class="text-5xl font-serif gradient-text opacity-60 leading-none mb-2">&ldquo;</div>
           <p class="text-txt-secondary italic leading-relaxed mb-4">Simple, clean, and does exactly what I need. The dashboard gives me a quick overview without overwhelming me.</p>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-sm font-bold">D</div>
@@ -770,7 +795,7 @@
         </div>
 
         <div class="testimonial-card glass-card p-6">
-          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <div class="text-5xl font-serif gradient-text opacity-60 leading-none mb-2">&ldquo;</div>
           <p class="text-txt-secondary italic leading-relaxed mb-4">I was skeptical at first but TutorHub has saved me at least 5 hours a week. The recurring session feature is brilliant — set it once and forget it.</p>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-sm font-bold">L</div>
@@ -785,7 +810,7 @@
         </div>
 
         <div class="testimonial-card glass-card p-6">
-          <div class="text-5xl font-serif gradient-text opacity-40 leading-none mb-2">&ldquo;</div>
+          <div class="text-5xl font-serif gradient-text opacity-60 leading-none mb-2">&ldquo;</div>
           <p class="text-txt-secondary italic leading-relaxed mb-4">As someone who tutors 30+ students, keeping track of everyone was a nightmare. TutorHub made it manageable and even enjoyable.</p>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-sm font-bold">M</div>
@@ -876,7 +901,13 @@
     document.addEventListener('DOMContentLoaded', () => {
 
       // Initialize Lucide icons
-      lucide.createIcons();
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+
+      // Check GSAP loaded
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        console.warn('GSAP not loaded, skipping animations');
+        return;
+      }
 
       // Register GSAP plugins
       gsap.registerPlugin(ScrollTrigger);
@@ -897,26 +928,32 @@
       // ===== HERO ENTRANCE ANIMATIONS =====
       const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       heroTl
-        .from('.hero-badge', { opacity: 0, y: 20, duration: 0.6 })
-        .from('.hero-title', { opacity: 0, y: 30, duration: 0.8 }, '-=0.3')
-        .from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.6 }, '-=0.4')
-        .from('.hero-ctas', { opacity: 0, y: 20, duration: 0.6 }, '-=0.3')
-        .from('.hero-mockup', { opacity: 0, y: 80, duration: 1.2, ease: 'power2.out' }, '-=0.4');
+        .fromTo('.hero-badge', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 })
+        .fromTo('.hero-title', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.3')
+        .fromTo('.hero-subtitle', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .fromTo('.hero-ctas', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
+        .fromTo('.hero-mockup', { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, '-=0.4');
 
       // ===== SECTION HEADING REVEALS =====
       gsap.utils.toArray('.section-heading').forEach(el => {
-        gsap.from(el, {
-          scrollTrigger: { trigger: el, start: 'top 85%' },
-          opacity: 0, y: 30, duration: 0.8, ease: 'power2.out',
-        });
+        gsap.fromTo(el,
+          { opacity: 0.15, y: 25 },
+          {
+            scrollTrigger: { trigger: el, start: 'top 90%' },
+            opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+          }
+        );
       });
 
       // ===== STAGGERED CARD REVEALS =====
       gsap.utils.toArray('[data-animate="stagger"]').forEach(container => {
-        gsap.from(container.children, {
-          scrollTrigger: { trigger: container, start: 'top 80%' },
-          opacity: 0, y: 40, stagger: 0.1, duration: 0.7, ease: 'power2.out',
-        });
+        gsap.fromTo(container.children,
+          { opacity: 0.15, y: 30 },
+          {
+            scrollTrigger: { trigger: container, start: 'top 90%' },
+            opacity: 1, y: 0, stagger: 0.1, duration: 0.7, ease: 'power2.out',
+          }
+        );
       });
 
       // ===== BENTO CARD MOUSE GLOW =====
@@ -947,21 +984,31 @@
       }
 
       // Step items stagger
-      gsap.from('.step-item', {
-        scrollTrigger: { trigger: '#how-it-works', start: 'top 65%' },
-        opacity: 0, y: 50, stagger: 0.2, duration: 0.8, ease: 'power2.out',
-      });
+      gsap.fromTo('.step-item',
+        { opacity: 0.15, y: 40 },
+        {
+          scrollTrigger: { trigger: '#how-it-works', start: 'top 85%' },
+          opacity: 1, y: 0, stagger: 0.2, duration: 0.8, ease: 'power2.out',
+        }
+      );
 
       // ===== TESTIMONIAL CARDS =====
-      gsap.from('.testimonial-card', {
-        scrollTrigger: { trigger: '#testimonials', start: 'top 75%' },
-        opacity: 0, y: 30, stagger: 0.08, duration: 0.6, ease: 'power2.out',
-      });
+      gsap.fromTo('.testimonial-card',
+        { opacity: 0.15, y: 25 },
+        {
+          scrollTrigger: { trigger: '#testimonials', start: 'top 85%' },
+          opacity: 1, y: 0, stagger: 0.08, duration: 0.6, ease: 'power2.out',
+        }
+      );
 
       // ===== STAT COUNTERS =====
       const counterElements = document.querySelectorAll('[data-count]');
+      let countersTriggered = false;
 
       function animateCounter(el) {
+        if (el.dataset.animated) return;
+        el.dataset.animated = 'true';
+
         const target = parseFloat(el.dataset.count);
         const isDecimal = el.dataset.decimal === 'true';
         const prefix = el.dataset.prefix || '';
@@ -989,17 +1036,22 @@
         requestAnimationFrame(step);
       }
 
-      // Trigger counters on scroll
-      const statsObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            animateCounter(entry.target);
-            statsObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.5 });
+      function triggerAllCounters() {
+        if (countersTriggered) return;
+        countersTriggered = true;
+        counterElements.forEach(el => animateCounter(el));
+      }
 
-      counterElements.forEach(el => statsObserver.observe(el));
+      // Trigger counters on scroll using ScrollTrigger (more reliable than IntersectionObserver with GSAP)
+      if (counterElements.length > 0) {
+        ScrollTrigger.create({
+          trigger: counterElements[0].closest('[data-animate]') || counterElements[0],
+          start: 'top 85%',
+          onEnter: triggerAllCounters,
+        });
+        // Fallback: trigger after 3s if ScrollTrigger doesn't fire
+        setTimeout(triggerAllCounters, 3000);
+      }
 
     });
   </script>
