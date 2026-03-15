@@ -127,10 +127,34 @@
 
                     <div class="mt-4">
                         <label for="timezone" class="block text-sm font-medium text-txt-secondary mb-1">Timezone</label>
-                        <input type="text" id="timezone" name="timezone"
-                            value="{{ current_user.timezone or '' }}"
-                            class="dark-input w-full px-4 py-2 rounded-lg"
-                            placeholder="UTC-5 (EST) or America/New_York">
+                        <select id="timezone" name="timezone" class="dark-input w-full px-4 py-2 rounded-lg">
+                            <option value="">Select timezone...</option>
+                            {% set tz_options = [
+                                ('US/Eastern', 'Eastern Time (ET)'),
+                                ('US/Central', 'Central Time (CT)'),
+                                ('US/Mountain', 'Mountain Time (MT)'),
+                                ('US/Pacific', 'Pacific Time (PT)'),
+                                ('US/Alaska', 'Alaska Time (AKT)'),
+                                ('US/Hawaii', 'Hawaii Time (HT)'),
+                                ('Europe/London', 'London (GMT/BST)'),
+                                ('Europe/Paris', 'Paris / Berlin (CET)'),
+                                ('Europe/Istanbul', 'Istanbul (TRT)'),
+                                ('Asia/Dubai', 'Dubai (GST)'),
+                                ('Asia/Kolkata', 'India (IST)'),
+                                ('Asia/Shanghai', 'China (CST)'),
+                                ('Asia/Tokyo', 'Tokyo (JST)'),
+                                ('Australia/Sydney', 'Sydney (AEST)'),
+                                ('Pacific/Auckland', 'Auckland (NZST)'),
+                                ('America/Sao_Paulo', 'Sao Paulo (BRT)'),
+                                ('America/Toronto', 'Toronto (ET)'),
+                                ('America/Vancouver', 'Vancouver (PT)'),
+                                ('Africa/Cairo', 'Cairo (EET)'),
+                                ('Africa/Lagos', 'Lagos (WAT)')
+                            ] %}
+                            {% for tz_val, tz_label in tz_options %}
+                            <option value="{{ tz_val }}" {% if current_user.timezone == tz_val %}selected{% endif %}>{{ tz_label }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 

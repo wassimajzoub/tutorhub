@@ -5,6 +5,13 @@
 {% block content %}
 <div class="min-h-screen py-12 px-4">
     <div class="max-w-2xl mx-auto">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb mb-6">
+            <a href="{{ url_for('students.list_students') }}">Students</a>
+            <span class="separator"><i data-lucide="chevron-right" class="w-3 h-3"></i></span>
+            <span class="current">{{ action }} Student</span>
+        </div>
+
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-txt-primary">{{ action }} Student</h1>
             <p class="text-txt-secondary mt-2">

@@ -4,9 +4,16 @@
 
 {% block content %}
 <div class="max-w-2xl mx-auto">
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb mb-6">
+        <a href="{{ url_for('scheduling.sessions_list') }}">Sessions</a>
+        <span class="separator"><i data-lucide="chevron-right" class="w-3 h-3"></i></span>
+        <span class="current">New Session</span>
+    </div>
+
     <div class="glass-card p-8">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold gradient-text">Schedule a New Session</h1>
+            <h1 class="text-3xl font-bold text-txt-primary">Schedule a New Session</h1>
             <p class="text-txt-secondary mt-2">Create a new tutoring session with one of your students.</p>
         </div>
 

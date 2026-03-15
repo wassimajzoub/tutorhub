@@ -3,11 +3,12 @@
 {% block title %}Set Availability - TutorHub{% endblock %}
 
 {% block content %}
-<div class="glass-card p-8">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold gradient-text">Set Your Availability</h1>
-        <p class="text-txt-secondary mt-2">Define your weekly teaching schedule so students can book sessions with you.</p>
-    </div>
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-txt-primary">Set Your Availability</h1>
+    <p class="text-txt-secondary mt-1">Define your weekly teaching schedule so students can book sessions with you.</p>
+</div>
+
+<div class="glass-card p-6 sm:p-8">
 
     <form method="POST" action="{{ url_for('scheduling.availability') }}" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
