@@ -1,0 +1,61 @@
+<!-- Step 1: Welcome & Bio -->
+<div class="text-center mb-8">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
+        <i data-lucide="sparkles" class="w-8 h-8 text-white"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-txt-primary">Welcome, {{ current_user.full_name.split(' ')[0] }}!</h2>
+    <p class="text-txt-secondary mt-2">Let's get your tutoring profile set up. First, tell students a bit about yourself.</p>
+</div>
+
+<form method="POST" action="{{ url_for('onboarding.wizard', step=1) }}" class="space-y-6">
+    <!-- Bio -->
+    <div>
+        <label for="bio" class="block text-sm font-medium text-txt-secondary mb-1">About You</label>
+        <textarea
+            id="bio"
+            name="bio"
+            rows="4"
+            class="dark-input w-full px-4 py-2.5 rounded-lg resize-none"
+            placeholder="I'm a passionate educator with 5 years of experience teaching math and science. I believe in making learning fun and engaging..."
+        >{{ current_user.bio or '' }}</textarea>
+        <p class="text-xs text-txt-muted mt-1">This will appear on your booking page. Write 2-3 sentences about your experience and teaching style.</p>
+    </div>
+
+    <!-- Profile Slug -->
+    <div>
+        <label for="profile_slug" class="block text-sm font-medium text-txt-secondary mb-1">Your Booking URL</label>
+        <div class="flex items-center gap-2">
+            <span class="text-sm text-txt-muted whitespace-nowrap hidden sm:inline">tutorhub.com/book/</span>
+            <input
+                type="text"
+                id="profile_slug"
+                name="profile_slug"
+                value="{{ current_user.profile_slug or '' }}"
+                class="dark-input w-full px-4 py-2.5 rounded-lg"
+                placeholder="john-doe"
+            >
+        </div>
+        <p class="text-xs text-txt-muted mt-1 sm:hidden">URL: tutorhub.com/book/<span id="slugPreview">{{ current_user.profile_slug or 'your-name' }}</span></p>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="section-divider"></div>
+    <div class="flex items-center justify-between pt-2">
+        <button type="submit" name="action" value="skip" class="text-sm text-txt-muted hover:text-txt-secondary transition-colors">
+            Skip for now
+        </button>
+        <button type="submit" name="action" value="next" class="cta-btn px-6 py-2.5 text-white rounded-lg font-medium inline-flex items-center gap-2">
+            Continue
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+    </div>
+</form>
+
+<script>
+document.getElementById('profile_slug').addEventListener('input', function() {
+    const preview = document.getElementById('slugPreview');
+    if (preview) {
+        preview.textContent = this.value || 'your-name';
+    }
+});
+</script>

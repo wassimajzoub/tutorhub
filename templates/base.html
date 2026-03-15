@@ -173,10 +173,20 @@
 </head>
 <body class="bg-surface min-h-screen text-txt-primary antialiased flex flex-col">
     {% if current_user.is_authenticated %}
+    {% set is_onboarding = (not current_user.onboarding_completed and request.endpoint and 'onboarding' in request.endpoint) %}
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 border-b border-surface-200/50" style="background: rgba(15, 15, 26, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between h-14">
+                {% if is_onboarding %}
+                <!-- Minimal nav during onboarding -->
+                <div class="flex items-center">
+                    <span class="text-lg font-bold gradient-text">TutorHub</span>
+                </div>
+                <div class="flex items-center">
+                    <a href="{{ url_for('auth.logout') }}" class="text-sm text-txt-muted hover:text-txt-secondary transition-colors">Log out</a>
+                </div>
+                {% else %}
                 <!-- Logo + Desktop Nav -->
                 <div class="flex items-center space-x-6">
                     <a href="{{ url_for('dashboard.index') }}" class="text-lg font-bold gradient-text">TutorHub</a>
@@ -206,9 +216,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
+                {% endif %}
             </div>
         </div>
 
+        {% if not is_onboarding %}
         <!-- Mobile drawer overlay -->
         <div id="mobileOverlay" class="mobile-overlay fixed inset-0 bg-black/50 z-40 md:hidden" onclick="toggleMobileMenu()"></div>
 
@@ -260,6 +272,7 @@
                 </a>
             </div>
         </div>
+        {% endif %}
     </nav>
     {% endif %}
 
@@ -292,7 +305,7 @@
         {% block content %}{% endblock %}
     </main>
 
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated and (current_user.onboarding_completed or (request.endpoint and 'onboarding' not in request.endpoint)) %}
     <!-- Footer -->
     <footer class="border-t border-surface-200/30 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Setup Step {{ step }} - TutorHub{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-4">
+
+    <!-- Progress Bar -->
+    <div class="mb-10">
+        <div class="flex items-center justify-between relative">
+            <!-- Connecting line -->
+            <div class="absolute top-5 left-0 right-0 h-0.5 bg-surface-200/50 mx-8"></div>
+            <div class="absolute top-5 left-0 h-0.5 mx-8 transition-all duration-500" style="background: linear-gradient(90deg, #6366f1, #a855f7); width: calc({{ ((step - 1) / (total_steps - 1)) * 100 }}% - 4rem);"></div>
+
+            {% set step_labels = ['Bio', 'Teaching', 'Sessions', 'Schedule', 'Launch'] %}
+            {% for i in range(1, total_steps + 1) %}
+            <div class="flex flex-col items-center relative z-10">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300
+                    {% if i < step %}
+                        text-white
+                    {% elif i == step %}
+                        text-white ring-4 ring-primary/30
+                    {% else %}
+                        bg-surface-100 text-txt-muted border border-surface-200/50
+                    {% endif %}"
+                    {% if i <= step %}style="background: linear-gradient(135deg, #6366f1, #a855f7);"{% endif %}>
+                    {% if i < step %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    {% else %}
+                        {{ i }}
+                    {% endif %}
+                </div>
+                <span class="text-xs mt-2 font-medium hidden sm:block {% if i == step %}text-primary-light{% elif i < step %}text-txt-secondary{% else %}text-txt-muted{% endif %}">
+                    {{ step_labels[i-1] }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Step Content Card -->
+    <div class="glass-card p-6 sm:p-8">
+        {% if step == 1 %}
+            {% include 'onboarding/steps/step1_bio.html' %}
+        {% elif step == 2 %}
+            {% include 'onboarding/steps/step2_teaching.html' %}
+        {% elif step == 3 %}
+            {% include 'onboarding/steps/step3_sessions.html' %}
+        {% elif step == 4 %}
+            {% include 'onboarding/steps/step4_availability.html' %}
+        {% elif step == 5 %}
+            {% include 'onboarding/steps/step5_preview.html' %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from database.db import db
 from database.models import Availability, Session, Student
-from scheduling.utils import DAY_NAMES, format_availability
+from scheduling.utils import DAY_NAMES, format_availability, save_availability_from_form
 
 scheduling_bp = Blueprint('scheduling', __name__, url_prefix='/scheduling')
 
@@ -12,29 +12,7 @@ scheduling_bp = Blueprint('scheduling', __name__, url_prefix='/scheduling')
 @login_required
 def availability():
     if request.method == 'POST':
-        # Clear existing availability
-        Availability.query.filter_by(user_id=current_user.id).delete()
-
-        for i in range(7):
-            if request.form.get(f'day_{i}_enabled'):
-                start_str = request.form.get(f'day_{i}_start', '')
-                end_str = request.form.get(f'day_{i}_end', '')
-                if start_str and end_str:
-                    try:
-                        start = datetime.strptime(start_str, '%H:%M').time()
-                        end = datetime.strptime(end_str, '%H:%M').time()
-                        if end > start:
-                            avail = Availability(
-                                user_id=current_user.id,
-                                day_of_week=i,
-                                start_time=start,
-                                end_time=end,
-                            )
-                            db.session.add(avail)
-                    except ValueError:
-                        continue
-
-        db.session.commit()
+        save_availability_from_form(current_user.id, request.form)
         flash('Availability updated!', 'success')
         return redirect(url_for('scheduling.availability'))
 

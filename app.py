@@ -39,6 +39,9 @@ def create_app(config_name=None):
     app.register_blueprint(booking_bp)
     app.register_blueprint(payments_bp)
 
+    from onboarding.routes import onboarding_bp
+    app.register_blueprint(onboarding_bp)
+
     # Error handlers
     @app.errorhandler(404)
     def page_not_found(e):
@@ -78,6 +81,20 @@ def create_app(config_name=None):
                 ))
                 db.session.commit()
                 print("Migration: Added meeting_link column to sessions table")
+
+            if 'onboarding_step' not in columns:
+                db.session.execute(text(
+                    "ALTER TABLE users ADD COLUMN onboarding_step INTEGER DEFAULT 1"
+                ))
+                db.session.commit()
+                print("Migration: Added onboarding_step column to users table")
+
+            if 'onboarding_completed' not in columns:
+                db.session.execute(text(
+                    "ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE"
+                ))
+                db.session.commit()
+                print("Migration: Added onboarding_completed column to users table")
         except Exception as e:
             print(f"Migration check: {e}")
 

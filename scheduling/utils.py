@@ -1,8 +1,42 @@
 from datetime import datetime, timedelta, time, date
+from database.db import db
 from database.models import Availability, Session
 
 
 DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+
+def save_availability_from_form(user_id, form_data):
+    """
+    Save availability from form data. Shared between scheduling and onboarding.
+    Clears existing availability and creates new records from form fields.
+    Returns the number of days with availability set.
+    """
+    Availability.query.filter_by(user_id=user_id).delete()
+
+    days_set = 0
+    for i in range(7):
+        if form_data.get(f'day_{i}_enabled'):
+            start_str = form_data.get(f'day_{i}_start', '')
+            end_str = form_data.get(f'day_{i}_end', '')
+            if start_str and end_str:
+                try:
+                    start = datetime.strptime(start_str, '%H:%M').time()
+                    end = datetime.strptime(end_str, '%H:%M').time()
+                    if end > start:
+                        avail = Availability(
+                            user_id=user_id,
+                            day_of_week=i,
+                            start_time=start,
+                            end_time=end,
+                        )
+                        db.session.add(avail)
+                        days_set += 1
+                except ValueError:
+                    continue
+
+    db.session.commit()
+    return days_set
 
 
 def get_available_slots(tutor_id, target_date, duration_minutes=60):

@@ -23,6 +23,8 @@ class User(UserMixin, db.Model):
     session_durations = db.Column(db.String(50), default='60') # comma-separated minutes
     default_meeting_link = db.Column(db.String(500), default='')  # Google Meet/Zoom link
     is_active = db.Column(db.Boolean, default=True)
+    onboarding_step = db.Column(db.Integer, default=1)
+    onboarding_completed = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships

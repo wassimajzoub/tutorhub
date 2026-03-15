@@ -50,8 +50,8 @@ def signup():
         db.session.commit()
 
         login_user(user)
-        flash('Welcome to TutorHub! Complete your profile to get started.', 'success')
-        return redirect(url_for('auth.profile'))
+        flash('Welcome to TutorHub! Let\'s set up your profile.', 'success')
+        return redirect(url_for('onboarding.wizard'))
 
     return render_template('auth/signup.html')
 
@@ -68,6 +68,16 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             login_user(user)
+
+            # Auto-complete onboarding for existing users who already have profiles filled
+            if not user.onboarding_completed:
+                if user.hourly_rate and user.hourly_rate > 0 and user.subjects and user.subjects.strip():
+                    user.onboarding_completed = True
+                    user.onboarding_step = 5
+                    db.session.commit()
+                else:
+                    return redirect(url_for('onboarding.wizard'))
+
             next_page = request.args.get('next')
             return redirect(next_page or url_for('dashboard.index'))
 

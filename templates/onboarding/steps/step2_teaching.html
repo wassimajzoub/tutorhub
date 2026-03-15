@@ -1,0 +1,85 @@
+<!-- Step 2: Teaching Info -->
+<div class="text-center mb-8">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
+        <i data-lucide="book-open" class="w-8 h-8 text-white"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-txt-primary">What Do You Teach?</h2>
+    <p class="text-txt-secondary mt-2">Tell us about your subjects and how much you charge.</p>
+</div>
+
+<form method="POST" action="{{ url_for('onboarding.wizard', step=2) }}" class="space-y-6">
+    <!-- Subjects -->
+    <div>
+        <label for="subjects" class="block text-sm font-medium text-txt-secondary mb-1">Subjects</label>
+        <input
+            type="text"
+            id="subjects"
+            name="subjects"
+            value="{{ current_user.subjects or '' }}"
+            class="dark-input w-full px-4 py-2.5 rounded-lg"
+            placeholder="Math, Physics, Chemistry"
+        >
+        <p class="text-xs text-txt-muted mt-1">Separate multiple subjects with commas</p>
+    </div>
+
+    <!-- Hourly Rate + Currency -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="hourly_rate" class="block text-sm font-medium text-txt-secondary mb-1">Hourly Rate</label>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-txt-muted">$</span>
+                <input
+                    type="number"
+                    id="hourly_rate"
+                    name="hourly_rate"
+                    value="{{ current_user.hourly_rate if current_user.hourly_rate > 0 else '' }}"
+                    min="0"
+                    step="0.01"
+                    class="dark-input w-full pl-8 pr-4 py-2.5 rounded-lg"
+                    placeholder="50.00"
+                >
+            </div>
+        </div>
+        <div>
+            <label for="currency" class="block text-sm font-medium text-txt-secondary mb-1">Currency</label>
+            <select id="currency" name="currency" class="dark-input w-full px-4 py-2.5 rounded-lg">
+                <option value="USD" {% if current_user.currency == 'USD' %}selected{% endif %}>USD - US Dollar</option>
+                <option value="EUR" {% if current_user.currency == 'EUR' %}selected{% endif %}>EUR - Euro</option>
+                <option value="GBP" {% if current_user.currency == 'GBP' %}selected{% endif %}>GBP - British Pound</option>
+                <option value="CAD" {% if current_user.currency == 'CAD' %}selected{% endif %}>CAD - Canadian Dollar</option>
+                <option value="AUD" {% if current_user.currency == 'AUD' %}selected{% endif %}>AUD - Australian Dollar</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tip -->
+    <div class="bg-primary/5 border border-primary/10 rounded-lg p-4">
+        <div class="flex gap-3">
+            <i data-lucide="lightbulb" class="w-5 h-5 text-primary-light flex-shrink-0 mt-0.5"></i>
+            <div>
+                <p class="text-sm text-txt-secondary">
+                    <span class="font-medium text-txt-primary">Tip:</span>
+                    Research what other tutors in your area charge. Most online tutors charge between $30-$80/hour depending on the subject.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="section-divider"></div>
+    <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('onboarding.wizard', step=1) }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors inline-flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <button type="submit" name="action" value="skip" class="text-sm text-txt-muted hover:text-txt-secondary transition-colors">
+                Skip
+            </button>
+        </div>
+        <button type="submit" name="action" value="next" class="cta-btn px-6 py-2.5 text-white rounded-lg font-medium inline-flex items-center gap-2">
+            Continue
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+    </div>
+</form>

@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from database.models import Session, Student
 
@@ -9,6 +9,10 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.route('/dashboard')
 @login_required
 def index():
+    # Redirect to onboarding if not completed
+    if not current_user.onboarding_completed:
+        return redirect(url_for('onboarding.wizard'))
+
     now = datetime.utcnow()
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = today_start + timedelta(days=1)

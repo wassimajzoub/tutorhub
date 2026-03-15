@@ -1,0 +1,118 @@
+<!-- Step 3: Session Setup -->
+<div class="text-center mb-8">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
+        <i data-lucide="settings" class="w-8 h-8 text-white"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-txt-primary">Session Setup</h2>
+    <p class="text-txt-secondary mt-2">Configure your session options and meeting details.</p>
+</div>
+
+<form method="POST" action="{{ url_for('onboarding.wizard', step=3) }}" class="space-y-6">
+    <!-- Session Durations (Checkbox Pills) -->
+    <div>
+        <label class="block text-sm font-medium text-txt-secondary mb-3">Session Durations</label>
+        <p class="text-xs text-txt-muted mb-3">Select the session lengths you offer</p>
+        <div class="flex flex-wrap gap-3">
+            {% set current_durations = current_user.session_durations.split(',') if current_user.session_durations else ['60'] %}
+            {% for dur in [30, 45, 60, 90] %}
+            <label class="duration-pill cursor-pointer">
+                <input type="checkbox" name="session_durations" value="{{ dur }}"
+                    class="hidden peer"
+                    {% if dur|string in current_durations %}checked{% endif %}>
+                <span class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border-2 border-surface-200/50 bg-surface-100 text-txt-secondary font-medium text-sm transition-all
+                    peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary-light hover:border-primary/40">
+                    <svg class="w-4 h-4 hidden peer-checked:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    {{ dur }} min
+                </span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Meeting Link -->
+    <div>
+        <label for="default_meeting_link" class="block text-sm font-medium text-txt-secondary mb-1">Default Meeting Link</label>
+        <input
+            type="url"
+            id="default_meeting_link"
+            name="default_meeting_link"
+            value="{{ current_user.default_meeting_link or '' }}"
+            class="dark-input w-full px-4 py-2.5 rounded-lg"
+            placeholder="https://meet.google.com/abc-defg-hij"
+        >
+        <p class="text-xs text-txt-muted mt-1">Your Google Meet or Zoom link for online sessions</p>
+    </div>
+
+    <!-- Timezone -->
+    <div>
+        <label for="timezone" class="block text-sm font-medium text-txt-secondary mb-1">Timezone</label>
+        <select id="timezone" name="timezone" class="dark-input w-full px-4 py-2.5 rounded-lg">
+            {% set timezones = [
+                'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+                'America/Anchorage', 'Pacific/Honolulu', 'America/Toronto', 'America/Vancouver',
+                'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Rome',
+                'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Kolkata', 'Asia/Dubai',
+                'Australia/Sydney', 'Australia/Melbourne', 'Pacific/Auckland',
+                'America/Sao_Paulo', 'Africa/Cairo', 'Africa/Johannesburg'
+            ] %}
+            {% for tz in timezones %}
+            <option value="{{ tz }}" {% if current_user.timezone == tz %}selected{% endif %}>{{ tz.replace('_', ' ') }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Phone & Address (optional) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="phone" class="block text-sm font-medium text-txt-secondary mb-1">Phone <span class="text-txt-muted">(optional)</span></label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value="{{ current_user.phone or '' }}"
+                class="dark-input w-full px-4 py-2.5 rounded-lg"
+                placeholder="(555) 123-4567"
+            >
+        </div>
+        <div>
+            <label for="address" class="block text-sm font-medium text-txt-secondary mb-1">Address <span class="text-txt-muted">(optional)</span></label>
+            <input
+                type="text"
+                id="address"
+                name="address"
+                value="{{ current_user.address or '' }}"
+                class="dark-input w-full px-4 py-2.5 rounded-lg"
+                placeholder="For in-person sessions"
+            >
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="section-divider"></div>
+    <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('onboarding.wizard', step=2) }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors inline-flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <button type="submit" name="action" value="skip" class="text-sm text-txt-muted hover:text-txt-secondary transition-colors">
+                Skip
+            </button>
+        </div>
+        <button type="submit" name="action" value="next" class="cta-btn px-6 py-2.5 text-white rounded-lg font-medium inline-flex items-center gap-2">
+            Continue
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+    </div>
+</form>
+
+<style>
+.duration-pill input:checked + span {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+}
+.duration-pill input:checked + span svg {
+    display: inline;
+}
+</style>
