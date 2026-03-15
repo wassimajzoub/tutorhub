@@ -3,17 +3,17 @@
 {% block title %}Set Availability - TutorHub{% endblock %}
 
 {% block content %}
-<div class="bg-white rounded-lg shadow-md p-6">
+<div class="glass-card p-8">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Set Your Availability</h1>
-        <p class="text-gray-600 mt-2">Define your weekly teaching schedule so students can book sessions with you.</p>
+        <h1 class="text-3xl font-bold gradient-text">Set Your Availability</h1>
+        <p class="text-txt-secondary mt-2">Define your weekly teaching schedule so students can book sessions with you.</p>
     </div>
 
     <form method="POST" action="{{ url_for('scheduling.availability') }}" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {% for day_idx in range(7) %}
             {% set day_name = day_names[day_idx] %}
-            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition">
+            <div class="bg-surface-100/60 rounded-lg p-4 border border-surface-200/30 hover:border-primary/20 transition">
                 <div class="flex items-center mb-4">
                     <input
                         type="checkbox"
@@ -21,34 +21,34 @@
                         name="day_{{ day_idx }}_enabled"
                         value="on"
                         {% if avail_dict.get(day_idx, {}).get('enabled') %}checked{% endif %}
-                        class="h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                        class="h-5 w-5 rounded border-surface-200 focus:ring-primary cursor-pointer accent-primary"
                         onchange="toggleDayInputs({{ day_idx }})"
                     >
-                    <label for="day_{{ day_idx }}_enabled" class="ml-3 text-lg font-semibold text-gray-900 cursor-pointer">
+                    <label for="day_{{ day_idx }}_enabled" class="ml-3 text-lg font-semibold text-txt-primary cursor-pointer">
                         {{ day_name }}
                     </label>
                 </div>
 
                 <div id="day_{{ day_idx }}_inputs" class="space-y-3" {% if not avail_dict.get(day_idx, {}).get('enabled') %}style="opacity: 0.5; pointer-events: none;"{% endif %}>
                     <div>
-                        <label for="day_{{ day_idx }}_start" class="block text-sm font-medium text-gray-700">Start Time</label>
+                        <label for="day_{{ day_idx }}_start" class="block text-sm font-medium text-txt-muted">Start Time</label>
                         <input
                             type="time"
                             id="day_{{ day_idx }}_start"
                             name="day_{{ day_idx }}_start"
                             value="{{ avail_dict.get(day_idx, {}).get('start', '') }}"
-                            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            class="mt-1 block w-full px-4 py-2 dark-input rounded-lg"
                         >
                     </div>
 
                     <div>
-                        <label for="day_{{ day_idx }}_end" class="block text-sm font-medium text-gray-700">End Time</label>
+                        <label for="day_{{ day_idx }}_end" class="block text-sm font-medium text-txt-muted">End Time</label>
                         <input
                             type="time"
                             id="day_{{ day_idx }}_end"
                             name="day_{{ day_idx }}_end"
                             value="{{ avail_dict.get(day_idx, {}).get('end', '') }}"
-                            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            class="mt-1 block w-full px-4 py-2 dark-input rounded-lg"
                         >
                     </div>
                 </div>
@@ -56,10 +56,11 @@
             {% endfor %}
         </div>
 
-        <div class="flex justify-end pt-6 border-t border-gray-200">
+        <div class="section-divider"></div>
+        <div class="flex justify-end pt-2">
             <button
                 type="submit"
-                class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition flex items-center space-x-2"
+                class="px-6 py-3 cta-btn text-white rounded-lg font-medium transition flex items-center space-x-2"
             >
                 <span>Save Availability</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

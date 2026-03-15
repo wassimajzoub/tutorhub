@@ -4,19 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book a Session with {{ tutor.full_name }} - TutorHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            surface: { DEFAULT: '#0a0a12', 50: '#0f0f1a', 100: '#16162a', 200: '#1e1e3a' },
+            primary: { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4f46e5' },
+            accent: { DEFAULT: '#a855f7', light: '#c084fc', cyan: '#22d3ee' },
+            txt: { primary: '#f1f5f9', secondary: '#94a3b8', muted: '#64748b' },
+          },
+        },
+      },
+    }
+    </script>
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .glass-card {
+            background: rgba(15, 15, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.08);
+            border-radius: 0.75rem;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #a855f7, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .cta-btn {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+        }
+        .cta-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+        }
+        .dark-input {
+            background: #16162a;
+            border: 1px solid rgba(30, 30, 58, 0.8);
+            color: #f1f5f9;
+            transition: all 0.2s;
+        }
+        .dark-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        .dark-input::placeholder { color: #64748b; }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-surface text-txt-primary antialiased">
     <!-- Header -->
-    <header class="bg-white shadow-sm">
+    <header class="border-b border-surface-200/30" style="background: rgba(15, 15, 26, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
             <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
                     <span class="text-white font-bold text-lg">{{ tutor.full_name[0] }}</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">{{ tutor.full_name }}</h1>
-                    <p class="text-gray-600">Tutoring Professional</p>
+                    <h1 class="text-2xl font-bold text-txt-primary">{{ tutor.full_name }}</h1>
+                    <p class="text-txt-secondary">Tutoring Professional</p>
                 </div>
             </div>
         </div>
@@ -27,25 +83,25 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Tutor Info Sidebar -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-lg shadow-md p-6 sticky top-6">
+                <div class="glass-card p-6 sticky top-6">
                     <!-- Profile -->
-                    <div class="mb-6 pb-6 border-b border-gray-200">
-                        <h2 class="text-lg font-bold text-gray-900 mb-3">About</h2>
-                        <p class="text-gray-700 text-sm leading-relaxed">{{ tutor.bio }}</p>
+                    <div class="mb-6 pb-6 border-b border-surface-200/30">
+                        <h2 class="text-lg font-bold text-txt-primary mb-3">About</h2>
+                        <p class="text-txt-secondary text-sm leading-relaxed">{{ tutor.bio }}</p>
                     </div>
 
                     <!-- Hourly Rate -->
-                    <div class="mb-6 pb-6 border-b border-gray-200">
-                        <p class="text-gray-600 text-sm font-medium">Hourly Rate</p>
-                        <p class="text-3xl font-bold text-indigo-600 mt-2">${{ tutor.hourly_rate }}/hr</p>
+                    <div class="mb-6 pb-6 border-b border-surface-200/30">
+                        <p class="text-txt-secondary text-sm font-medium">Hourly Rate</p>
+                        <p class="text-3xl font-bold text-primary-light mt-2">${{ tutor.hourly_rate }}/hr</p>
                     </div>
 
                     <!-- Subjects -->
                     <div class="mb-6">
-                        <h3 class="text-sm font-bold text-gray-900 mb-3">Subjects</h3>
+                        <h3 class="text-sm font-bold text-txt-primary mb-3">Subjects</h3>
                         <div class="flex flex-wrap gap-2">
                             {% for subject in tutor.subject_list() %}
-                            <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full">
+                            <span class="inline-block px-3 py-1 bg-primary/10 text-primary-light text-xs font-semibold rounded-full">
                                 {{ subject }}
                             </span>
                             {% endfor %}
@@ -56,56 +112,56 @@
 
             <!-- Booking Form -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-lg shadow-md p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Book a Session</h2>
+                <div class="glass-card p-8">
+                    <h2 class="text-2xl font-bold text-txt-primary mb-6">Book a Session</h2>
 
                     <form method="POST" action="{{ url_for('booking.confirm_booking', slug=tutor.profile_slug) }}" class="space-y-6">
                         <!-- Student Name -->
                         <div>
-                            <label for="student_name" class="block text-sm font-medium text-gray-900">Your Name</label>
+                            <label for="student_name" class="block text-sm font-medium text-txt-secondary">Your Name</label>
                             <input
                                 type="text"
                                 id="student_name"
                                 name="student_name"
                                 required
-                                class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                class="dark-input mt-2 block w-full px-4 py-2 rounded-lg"
                                 placeholder="John Smith"
                             >
                         </div>
 
                         <!-- Parent Email -->
                         <div>
-                            <label for="parent_email" class="block text-sm font-medium text-gray-900">Email Address</label>
+                            <label for="parent_email" class="block text-sm font-medium text-txt-secondary">Email Address</label>
                             <input
                                 type="email"
                                 id="parent_email"
                                 name="parent_email"
                                 required
-                                class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                class="dark-input mt-2 block w-full px-4 py-2 rounded-lg"
                                 placeholder="john@example.com"
                             >
                         </div>
 
                         <!-- Parent Phone -->
                         <div>
-                            <label for="parent_phone" class="block text-sm font-medium text-gray-900">Phone Number</label>
+                            <label for="parent_phone" class="block text-sm font-medium text-txt-secondary">Phone Number</label>
                             <input
                                 type="tel"
                                 id="parent_phone"
                                 name="parent_phone"
-                                class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                class="dark-input mt-2 block w-full px-4 py-2 rounded-lg"
                                 placeholder="(555) 123-4567"
                             >
                         </div>
 
                         <!-- Subject -->
                         <div>
-                            <label for="subject" class="block text-sm font-medium text-gray-900">Subject</label>
+                            <label for="subject" class="block text-sm font-medium text-txt-secondary">Subject</label>
                             <select
                                 id="subject"
                                 name="subject"
                                 required
-                                class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                                class="dark-input mt-2 block w-full px-4 py-2 rounded-lg"
                             >
                                 <option value="">Select a subject...</option>
                                 {% for subject in tutor.subject_list() %}
@@ -116,7 +172,7 @@
 
                         <!-- Session Type -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-3">Session Type</label>
+                            <label class="block text-sm font-medium text-txt-secondary mb-3">Session Type</label>
                             <div class="space-y-3">
                                 <div class="flex items-center">
                                     <input
@@ -125,9 +181,9 @@
                                         name="session_type"
                                         value="online"
                                         required
-                                        class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                                        class="h-4 w-4 text-primary border-surface-200 focus:ring-primary bg-surface-100 cursor-pointer"
                                     >
-                                    <label for="type_online" class="ml-3 text-gray-700 cursor-pointer font-medium">
+                                    <label for="type_online" class="ml-3 text-txt-secondary cursor-pointer font-medium">
                                         Online
                                     </label>
                                 </div>
@@ -138,9 +194,9 @@
                                         name="session_type"
                                         value="in-person"
                                         required
-                                        class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                                        class="h-4 w-4 text-primary border-surface-200 focus:ring-primary bg-surface-100 cursor-pointer"
                                     >
-                                    <label for="type_in_person" class="ml-3 text-gray-700 cursor-pointer font-medium">
+                                    <label for="type_in_person" class="ml-3 text-txt-secondary cursor-pointer font-medium">
                                         In-Person
                                     </label>
                                 </div>
@@ -149,12 +205,12 @@
 
                         <!-- Duration -->
                         <div>
-                            <label for="duration" class="block text-sm font-medium text-gray-900">Duration</label>
+                            <label for="duration" class="block text-sm font-medium text-txt-secondary">Duration</label>
                             <select
                                 id="duration"
                                 name="duration"
                                 required
-                                class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                                class="dark-input mt-2 block w-full px-4 py-2 rounded-lg"
                                 onchange="updateTimeSlots()"
                             >
                                 <option value="">Select duration...</option>
@@ -166,17 +222,17 @@
 
                         <!-- Date Selection -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-3">Select a Date</label>
-                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3 bg-gray-50">
+                            <label class="block text-sm font-medium text-txt-secondary mb-3">Select a Date</label>
+                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto border border-surface-200/30 rounded-lg p-3 bg-surface-50">
                                 {% for date in dates %}
                                 <button
                                     type="button"
-                                    class="date-btn p-2 text-center rounded-lg border-2 border-gray-300 hover:border-indigo-500 transition text-sm font-medium"
+                                    class="date-btn p-2 text-center rounded-lg border-2 border-surface-200/30 hover:border-primary transition text-sm font-medium bg-surface-100"
                                     data-date="{{ date.strftime('%Y-%m-%d') }}"
                                     onclick="selectDate(this)"
                                 >
-                                    <div class="text-xs text-gray-600">{{ date.strftime('%a') }}</div>
-                                    <div>{{ date.strftime('%m/%d') }}</div>
+                                    <div class="text-xs text-txt-muted">{{ date.strftime('%a') }}</div>
+                                    <div class="text-txt-primary">{{ date.strftime('%m/%d') }}</div>
                                 </button>
                                 {% endfor %}
                             </div>
@@ -185,18 +241,18 @@
 
                         <!-- Time Slots -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-3">Select a Time</label>
-                            <div id="time_slots_container" class="grid grid-cols-3 sm:grid-cols-4 gap-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
-                                <p class="col-span-full text-center text-gray-600 text-sm">Select a date and duration to view available times</p>
+                            <label class="block text-sm font-medium text-txt-secondary mb-3">Select a Time</label>
+                            <div id="time_slots_container" class="grid grid-cols-3 sm:grid-cols-4 gap-2 border border-surface-200/30 rounded-lg p-3 bg-surface-50">
+                                <p class="col-span-full text-center text-txt-muted text-sm">Select a date and duration to view available times</p>
                             </div>
                             <input type="hidden" id="selected_time" name="time">
                         </div>
 
                         <!-- Hidden inputs for form -->
-                        <div class="border-t border-gray-200 pt-6">
+                        <div class="border-t border-surface-200/30 pt-6">
                             <button
                                 type="submit"
-                                class="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center space-x-2"
+                                class="cta-btn w-full px-6 py-3 text-white rounded-lg font-semibold flex items-center justify-center space-x-2"
                             >
                                 <span>Confirm Booking</span>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,9 +267,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
+    <footer class="border-t border-surface-200/30 mt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-center">
-            <p class="text-gray-600 text-sm">Powered by <span class="font-semibold text-indigo-600">TutorHub</span></p>
+            <p class="text-txt-muted text-sm">Powered by <span class="font-semibold gradient-text">TutorHub</span></p>
         </div>
     </footer>
 
@@ -221,13 +277,13 @@
     function selectDate(button) {
         // Remove active state from all date buttons
         document.querySelectorAll('.date-btn').forEach(btn => {
-            btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
-            btn.classList.add('border-gray-300', 'text-gray-900');
+            btn.classList.remove('border-primary', 'bg-primary/10', 'text-primary-light');
+            btn.classList.add('border-surface-200/30', 'bg-surface-100');
         });
 
         // Add active state to clicked button
-        button.classList.remove('border-gray-300', 'text-gray-900');
-        button.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
+        button.classList.remove('border-surface-200/30', 'bg-surface-100');
+        button.classList.add('border-primary', 'bg-primary/10', 'text-primary-light');
 
         // Set the hidden date input
         const selectedDate = button.getAttribute('data-date');
@@ -243,7 +299,7 @@
 
         if (!date || !duration) {
             document.getElementById('time_slots_container').innerHTML =
-                '<p class="col-span-full text-center text-gray-600 text-sm">Select a date and duration to view available times</p>';
+                '<p class="col-span-full text-center text-txt-muted text-sm">Select a date and duration to view available times</p>';
             return;
         }
 
@@ -259,7 +315,7 @@
                     data.slots.forEach(slot => {
                         const button = document.createElement('button');
                         button.type = 'button';
-                        button.className = 'time-slot-btn p-2 text-center rounded-lg border-2 border-gray-300 hover:border-indigo-500 transition text-sm font-medium';
+                        button.className = 'time-slot-btn p-2 text-center rounded-lg border-2 border-surface-200/30 hover:border-primary transition text-sm font-medium bg-surface-100 text-txt-primary';
                         button.textContent = slot;
                         button.onclick = function() {
                             selectTimeSlot(this, slot);
@@ -267,26 +323,26 @@
                         container.appendChild(button);
                     });
                 } else {
-                    container.innerHTML = '<p class="col-span-full text-center text-gray-600 text-sm">No available times for this date</p>';
+                    container.innerHTML = '<p class="col-span-full text-center text-txt-muted text-sm">No available times for this date</p>';
                 }
             })
             .catch(error => {
                 console.error('Error fetching time slots:', error);
                 document.getElementById('time_slots_container').innerHTML =
-                    '<p class="col-span-full text-center text-red-600 text-sm">Error loading available times</p>';
+                    '<p class="col-span-full text-center text-red-400 text-sm">Error loading available times</p>';
             });
     }
 
     function selectTimeSlot(button, time) {
         // Remove active state from all time slot buttons
         document.querySelectorAll('.time-slot-btn').forEach(btn => {
-            btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
-            btn.classList.add('border-gray-300', 'text-gray-900');
+            btn.classList.remove('border-primary', 'bg-primary/10', 'text-primary-light');
+            btn.classList.add('border-surface-200/30', 'bg-surface-100', 'text-txt-primary');
         });
 
         // Add active state to clicked button
-        button.classList.remove('border-gray-300', 'text-gray-900');
-        button.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
+        button.classList.remove('border-surface-200/30', 'bg-surface-100', 'text-txt-primary');
+        button.classList.add('border-primary', 'bg-primary/10', 'text-primary-light');
 
         // Set the hidden time input
         document.getElementById('selected_time').value = time;

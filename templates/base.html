@@ -4,32 +4,98 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}TutorHub{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            surface: { DEFAULT: '#0a0a12', 50: '#0f0f1a', 100: '#16162a', 200: '#1e1e3a' },
+            primary: { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4f46e5' },
+            accent: { DEFAULT: '#a855f7', light: '#c084fc', cyan: '#22d3ee' },
+            txt: { primary: '#f1f5f9', secondary: '#94a3b8', muted: '#64748b' },
+          },
+        },
+      },
+    }
+    </script>
     <style>
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
         .flash-msg { animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-card {
+            background: rgba(15, 15, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.08);
+            border-radius: 0.75rem;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #a855f7, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .cta-btn {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+        }
+        .cta-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+        }
+        .ghost-btn {
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+        }
+        .ghost-btn:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .dark-input {
+            background: #16162a;
+            border: 1px solid rgba(30, 30, 58, 0.8);
+            color: #f1f5f9;
+            transition: all 0.2s;
+        }
+        .dark-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        .dark-input::placeholder { color: #64748b; }
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(99, 102, 241, 0.15), transparent);
+        }
     </style>
     {% block head %}{% endblock %}
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-surface min-h-screen text-txt-primary antialiased">
     {% if current_user.is_authenticated %}
     <!-- Navigation -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav class="sticky top-0 z-50 border-b border-surface-200/50" style="background: rgba(15, 15, 26, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between h-14">
                 <div class="flex items-center space-x-6">
-                    <a href="{{ url_for('dashboard.index') }}" class="text-lg font-bold text-indigo-600">TutorHub</a>
-                    <a href="{{ url_for('dashboard.index') }}" class="text-sm text-gray-600 hover:text-gray-900 {% if request.endpoint == 'dashboard.index' %}text-indigo-600 font-medium{% endif %}">Dashboard</a>
-                    <a href="{{ url_for('students.list_students') }}" class="text-sm text-gray-600 hover:text-gray-900 {% if 'students' in request.endpoint %}text-indigo-600 font-medium{% endif %}">Students</a>
-                    <a href="{{ url_for('scheduling.sessions_list') }}" class="text-sm text-gray-600 hover:text-gray-900 {% if 'scheduling' in request.endpoint %}text-indigo-600 font-medium{% endif %}">Sessions</a>
-                    <a href="{{ url_for('scheduling.availability') }}" class="text-sm text-gray-600 hover:text-gray-900">Availability</a>
-                    <a href="{{ url_for('payments.overview') }}" class="text-sm text-gray-600 hover:text-gray-900 {% if 'payments' in request.endpoint %}text-indigo-600 font-medium{% endif %}">Payments</a>
+                    <a href="{{ url_for('dashboard.index') }}" class="text-lg font-bold gradient-text">TutorHub</a>
+                    <a href="{{ url_for('dashboard.index') }}" class="text-sm transition-colors {% if request.endpoint == 'dashboard.index' %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Dashboard</a>
+                    <a href="{{ url_for('students.list_students') }}" class="text-sm transition-colors {% if 'students' in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Students</a>
+                    <a href="{{ url_for('scheduling.sessions_list') }}" class="text-sm transition-colors {% if 'scheduling' in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Sessions</a>
+                    <a href="{{ url_for('scheduling.availability') }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">Availability</a>
+                    <a href="{{ url_for('payments.overview') }}" class="text-sm transition-colors {% if 'payments' in request.endpoint %}text-primary-light font-medium{% else %}text-txt-secondary hover:text-txt-primary{% endif %}">Payments</a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ url_for('booking.public_profile', slug=current_user.profile_slug) }}" target="_blank" class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100">Booking Page</a>
-                    <a href="{{ url_for('auth.profile') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ current_user.full_name }}</a>
-                    <a href="{{ url_for('auth.logout') }}" class="text-sm text-gray-400 hover:text-gray-600">Log out</a>
+                    <a href="{{ url_for('booking.public_profile', slug=current_user.profile_slug) }}" target="_blank" class="text-xs bg-primary/10 text-primary-light px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">Booking Page</a>
+                    <a href="{{ url_for('auth.profile') }}" class="text-sm text-txt-secondary hover:text-txt-primary transition-colors">{{ current_user.full_name }}</a>
+                    <a href="{{ url_for('auth.logout') }}" class="text-sm text-txt-muted hover:text-txt-secondary transition-colors">Log out</a>
                 </div>
             </div>
         </div>
@@ -42,9 +108,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-4">
         {% for category, message in messages %}
         <div class="flash-msg mb-2 p-3 rounded-lg text-sm
-            {% if category == 'error' %}bg-red-50 text-red-700 border border-red-200
-            {% elif category == 'success' %}bg-green-50 text-green-700 border border-green-200
-            {% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+            {% if category == 'error' %}bg-red-900/20 text-red-400 border border-red-500/30
+            {% elif category == 'success' %}bg-green-900/20 text-green-400 border border-green-500/30
+            {% else %}bg-blue-900/20 text-blue-400 border border-blue-500/30{% endif %}">
             {{ message }}
         </div>
         {% endfor %}
@@ -57,6 +123,7 @@
         {% block content %}{% endblock %}
     </main>
 
+    <script>document.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
